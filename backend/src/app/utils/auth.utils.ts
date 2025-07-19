@@ -36,6 +36,12 @@ const hashPassword = (password: string) => {
   const hash = bcrypt.hash(password, 10);
   return hash;
 };
+
+const verifyPassword = async (password: string, hash: string) => {
+  const isMatch = await bcrypt.compare(password, hash);
+  return isMatch;
+};
+
 const sendMessage = async (data: { html: string; receiverMail: string; subject: string }) => {
   // under construction
   return data;
@@ -53,6 +59,7 @@ const authUtils = {
   hashPassword,
   sendMessage,
   sendEmail,
+  verifyPassword,
 };
 
 export default authUtils;

@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import config from "../config";
 import AppError from "../errors/AppError";
 import { IUserJWTPayload, TRoles } from "../interface/auth.interface";
+import prisma from "../lib/prisma";
 import { IUserInfoRequest } from "../utils/catchAsync";
-import prisma from "../utils/prisma";
 
 const isAuthenticatedUser = (isOptional?: boolean) => {
   return async (req: IUserInfoRequest, res: Response, next: NextFunction) => {

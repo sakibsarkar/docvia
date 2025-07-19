@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,21 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
-
 model User {
-  id                     String                   @id @default(uuid())
-  email                  String                   @unique
-  first_name             String
-  last_name              String
-  phone_number           String
-  password               String
-  role                   UserRole
+  id                    String         @id @default(uuid())
+  email                 String         @unique
+  avatar                String?
+  first_name            String
+  last_name             String
+  phone_number          String         @unique
+  password              String
+  role                  UserRole
+  isVerified            Boolean        @default(false)
+  currentSubscriptionId String         @default("")
+  stripeCustomerId      String?
+  Subscription          Subscription[]
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
 }
 
+model Plan {
+  id              String         @id @default(uuid())
+  name            String
+  price           Int // in cents/ (react price * 100);
+  durationMonths  Int
+  storage         Int
+  appLimit        Int // Set to -1 for unlimited albums
+  customization   Boolean
+  trialPeriodDays Int            @default(0)
+  stripeProdId    String?
+  isActive        Boolean        @default(true)
+  Subscription    Subscription[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Subscription {
+  id                   String   @id @default(uuid())
+  userInfo             User     @relation(fields: [user], references: [id])
+  user                 String
+  planInfo             Plan     @relation(fields: [planId], references: [id])
+  planId               String
+  price                Int // in cents/ (react price * 100);
+  stripeSubscriptionId String?
+  stripeCustomerId     String
+  startDate            DateTime
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+}
 
 enum UserRole {
-user
-admin
+  user
+  admin
 }

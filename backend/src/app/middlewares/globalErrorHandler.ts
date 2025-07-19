@@ -21,6 +21,8 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
     },
   ];
 
+  console.dir(error, { depth: null, colors: true, maxArrayLength: null });
+
   if (error instanceof ZodError && isDev) {
     const simpleErr = handleZodError(error);
     statusCode = simpleErr?.statusCode;
@@ -53,6 +55,7 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   return res.status(statusCode).json({
     success: false,
     message,
+    statusCode,
     errorMessages: errorMessages,
     stack: process.env.NODE_ENV === "development" ? error?.stack : undefined,
   });

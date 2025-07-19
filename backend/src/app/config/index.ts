@@ -7,12 +7,15 @@ const {
   REFRESH_TOKEN_SECRET,
   ACCESS_TOKEN_SECRET,
   NODE_ENV,
-  DB_URL,
+  DATABASE_URL,
   PORT,
-  PASSWORD_RECOVERY_SECRET,GEMINI_API_KEY
+  PASSWORD_RECOVERY_SECRET,
+  GEMINI_API_KEY,
+  STRIPE_SECRET_KEY,
 } = process.env;
 export default {
-  database_url: DB_URL,
+  DATABASE_URL: DATABASE_URL,
+  STRIPE_SECRET_KEY,
   port: PORT,
   NODE_ENV: NODE_ENV,
   REFRESH_TOKEN: {
@@ -26,6 +29,7 @@ export default {
   RECOVERY_TOKEN: {
     SECRET: PASSWORD_RECOVERY_SECRET,
     EXPIRY: "5m",
-  },GEMINI_API_KEY,
+  },
+  GEMINI_API_KEY,
   frontend_base_url: NODE_ENV === "development" ? "http://localhost:3000" : FRONTEND_BASE_URL,
 };

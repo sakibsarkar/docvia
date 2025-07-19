@@ -1,12 +1,14 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
+import Stripe from "stripe";
 import config from "./app/config";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import router from "./app/routes";
 
 const app: Application = express();
+export const stripe = new Stripe(config.STRIPE_SECRET_KEY as string);
 
 // parsers
 app.use(cookieParser());

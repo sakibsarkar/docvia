@@ -1,17 +1,17 @@
 import express from "express";
+import authRoute from "../modules/auth/auth.route";
 import chatRoute from "./chat.route";
-import tempRoute from "./temp.route";
 
 const router = express.Router();
 
 const moduleRoutes = [
   {
-    path: "/temp",
-    route: tempRoute,
-  },
-  {
     path: "/chat",
     route: chatRoute,
+  },
+  {
+    path: "/auth",
+    route: authRoute,
   },
 ];
 
