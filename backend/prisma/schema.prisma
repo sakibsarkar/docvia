@@ -41,20 +41,29 @@ model Plan {
 }
 
 model Subscription {
-  id                   String   @id @default(uuid())
-  userInfo             User     @relation(fields: [user], references: [id])
+  id                   String             @id @default(uuid())
+  userInfo             User               @relation(fields: [user], references: [id])
   user                 String
-  planInfo             Plan     @relation(fields: [planId], references: [id])
+  planInfo             Plan               @relation(fields: [planId], references: [id])
   planId               String
   price                Int // in cents/ (react price * 100);
   stripeSubscriptionId String?
   stripeCustomerId     String
   startDate            DateTime
-  isActive             Boolean  @default(true)
-  createdAt            DateTime @default(now())
+  status               SubscriptionStatus
+  isActive             Boolean            @default(true)
+  createdAt            DateTime           @default(now())
 }
 
 enum UserRole {
   user
   admin
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  incomplete
+  past_due
+  trialing
 }

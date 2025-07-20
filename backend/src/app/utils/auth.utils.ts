@@ -50,6 +50,17 @@ const sendEmail = async (data: { html: string; receiverMail: string; subject: st
   // under construction
   return data;
 };
+
+const isTokenExpired = (token: string) => {
+  if (!token) {
+    return true;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const decodedToken: any = jwt.decode(token);
+  const currentTime = Date.now() / 1000;
+  return decodedToken.exp < currentTime;
+};
+
 const authUtils = {
   generateAccessToken,
   generateRefreshToken,
@@ -60,6 +71,7 @@ const authUtils = {
   sendMessage,
   sendEmail,
   verifyPassword,
+  isTokenExpired,
 };
 
 export default authUtils;

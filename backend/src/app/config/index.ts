@@ -12,9 +12,12 @@ const {
   PASSWORD_RECOVERY_SECRET,
   GEMINI_API_KEY,
   STRIPE_SECRET_KEY,
+  SERVER_URL,
+  STRIPE_WEBHOOK_SECRET,
 } = process.env;
 export default {
   DATABASE_URL: DATABASE_URL,
+  SERVER_URL,
   STRIPE_SECRET_KEY,
   port: PORT,
   NODE_ENV: NODE_ENV,
@@ -32,4 +35,5 @@ export default {
   },
   GEMINI_API_KEY,
   frontend_base_url: NODE_ENV === "development" ? "http://localhost:3000" : FRONTEND_BASE_URL,
+  STRIPE_WEBHOOK_SECRET,
 };
