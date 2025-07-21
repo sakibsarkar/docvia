@@ -1,5 +1,6 @@
 import express from "express";
 import authRoute from "../modules/auth/auth.route";
+import clientAppRoute from "../modules/clientApp/clientApp.route";
 import subscriptionRoute from "../modules/subscription/subscription.route";
 import chatRoute from "./chat.route";
 
@@ -17,6 +18,10 @@ const moduleRoutes = [
   {
     path: "/subscription",
     route: subscriptionRoute,
+  },
+  {
+    path: "/app",
+    route: clientAppRoute,
   },
 ];
 

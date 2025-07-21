@@ -2,10 +2,10 @@ import { stripe } from "../../app";
 import AppError from "../errors/AppError";
 import prisma from "../lib/prisma";
 
-const getUserCustomeridByUserId = async (userid: string) => {
+const getUserCustomeridByUserId = async (userId: string) => {
   const user = await prisma.user.findUnique({
     where: {
-      id: userid,
+      id: userId,
     },
     select: {
       stripeCustomerId: true,
@@ -32,7 +32,7 @@ const getUserCustomeridByUserId = async (userid: string) => {
 
   await prisma.user.update({
     where: {
-      id: userid,
+      id: userId,
     },
     data: {
       stripeCustomerId: customer.id,

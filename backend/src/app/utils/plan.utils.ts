@@ -16,9 +16,9 @@ export const basicPlan = async () => {
         appLimit: 1,
         customization: false,
         durationMonths: 1,
+        trialPeriodDays: 0,
         name: "Basic Plan",
         price: 0,
-        storage: 100,
         isActive: true,
       },
     });

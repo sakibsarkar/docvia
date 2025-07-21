@@ -3,13 +3,14 @@ import { stripe } from "../../app";
 import AppError from "../errors/AppError";
 import prisma from "../lib/prisma";
 import planSeed, { freePlanId } from "./plan.utils";
+import userUtils from "./user.utils";
 
 interface IProps {
   durationInMonths: number;
-  createdAt: string;
+  createdAt: string | Date;
 }
 
-export const isDurationOver = (payload: IProps): boolean => {
+const isDurationOver = (payload: IProps): boolean => {
   const { createdAt, durationInMonths } = payload;
   const createdDate = new Date(createdAt);
 
@@ -27,14 +28,14 @@ export const isDurationOver = (payload: IProps): boolean => {
   return currentDate > adjustedExpirationDate;
 };
 
-export const getUserSubscription = async (
-  customerId: string,
-  userId: string,
-  resetSubscription?: boolean
-) => {
+const getUserCurrentSubscriptionId = async (userId: string) => {
   const userInfo = await prisma.user.findUnique({
     where: {
       id: userId,
+    },
+    select: {
+      stripeCustomerId: true,
+      currentSubscriptionId: true,
     },
   });
 
@@ -42,7 +43,7 @@ export const getUserSubscription = async (
     throw new AppError(400, "User not found");
   }
 
-  if (userInfo.currentSubscriptionId && !resetSubscription) {
+  if (userInfo.currentSubscriptionId) {
     return userInfo.currentSubscriptionId;
   }
 
@@ -56,13 +57,19 @@ export const getUserSubscription = async (
     await planSeed();
   }
 
+  let customerId = userInfo.stripeCustomerId;
+
+  if (!customerId) {
+    customerId = await userUtils.getUserCustomeridByUserId(userId);
+  }
+
   const subscriptionId = v4();
   await prisma.subscription.create({
     data: {
       id: subscriptionId,
       status: "active",
       stripeCustomerId: customerId,
-      user: userId,
+      userId: userId,
       planId: freePlanId,
       price: 0,
       startDate: new Date(),
@@ -89,7 +96,7 @@ export const getUserSubscription = async (
 };
 
 // this func is not in use anymore --:
-export const isActiveSubscription = async (subscriptionId: string) => {
+const isActiveSubscription = async (subscriptionId: string) => {
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
   // Check the subscription status
@@ -98,30 +105,9 @@ export const isActiveSubscription = async (subscriptionId: string) => {
   return status === "active" || status === "trialing";
 };
 
-export const checkUserSubscription = async (currentSubscriptionId: string) => {
-  const subscription = await prisma.subscription.findFirst({
-    where: {
-      id: currentSubscriptionId,
-    },
-    include: {
-      planInfo: true,
-    },
-  });
-
-  if (!subscription) {
-    throw new AppError(404, "Subscription not found");
-  }
-
-  if (!subscription.stripeSubscriptionId) {
-    throw new AppError(404, "Subscription not valid");
-  }
-  const isOver = isDurationOver({
-    createdAt: subscription.startDate.toString(),
-    durationInMonths: subscription.planInfo.durationMonths,
-  });
-  if (isOver) {
-    throw new AppError(403, "Subscription not active");
-  }
-
-  return subscription;
+const subscriptionUtils = {
+  getUserCurrentSubscriptionId,
+  isActiveSubscription,
+  isDurationOver,
 };
+export default subscriptionUtils;

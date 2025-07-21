@@ -5,16 +5,18 @@ import Stripe from "stripe";
 import config from "./app/config";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
-import subscriptionController from "./app/modules/subscription/subscription.controller";
+import subscriptionWebhook from "./app/modules/subscription/subscription.webhook";
 import router from "./app/routes";
 
 const app: Application = express();
-export const stripe = new Stripe(config.STRIPE_SECRET_KEY as string,{apiVersion:"2025-06-30.basil"});
+export const stripe = new Stripe(config.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2025-06-30.basil",
+});
 
 app.post(
   "/api/v1/subscription/stripe/webhook",
   express.raw({ type: "application/json" }),
-  subscriptionController.stripeWebhookController
+  subscriptionWebhook.subscriptionComplete
 );
 
 // parsers
