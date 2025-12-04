@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 const PassThrough = () => {
   const searchParams = useSearchParams();
@@ -11,7 +11,7 @@ const PassThrough = () => {
   const message = searchParams.get("message");
 
   useEffect(() => {
-    if (error === "0") {
+    if (!error || error === "0") {
       // No error → go home
       router.replace("/");
     }

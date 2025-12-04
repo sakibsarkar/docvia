@@ -4,7 +4,7 @@ import config from "../../config";
 import prisma from "../../lib/prisma";
 
 const GOOGLE_AUTH_SCOPES = [
-  "https://www.googleapis.com/auth/drive.metadata.readonly",
+  // "https://www.googleapis.com/auth/drive.metadata.readonly",
   "https://www.googleapis.com/auth/documents.readonly", // structured read
   // "https://www.googleapis.com/auth/drive.readonly",    // OR export read
 ];
