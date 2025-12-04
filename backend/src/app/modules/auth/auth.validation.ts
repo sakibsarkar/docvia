@@ -15,7 +15,6 @@ const register = z.object({
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  phone_number: z.string({ message: "Phone number is required" }),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters long")
@@ -24,4 +23,22 @@ const register = z.object({
     .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
 });
 
-export const authValidation = { login, register };
+const resetPassword = z.object({
+  token: z.string({ message: "Token is required" }),
+  password: z.string({ message: "A new 'Password' is required" }),
+});
+const changePassword = z.object({
+  oldPassword: z.string({ message: "oldpassword is required" }),
+  password: z.string({ message: "A new 'Password' is required" }),
+});
+
+const sendVerificationEmail = z.object({
+  email: z.string({ message: "Email is required String" }).email({ message: "Email is invalid" }),
+});
+export const authValidation = {
+  login,
+  register,
+  resetPassword,
+  changePassword,
+  sendVerificationEmail,
+};

@@ -48,7 +48,50 @@ const getAppApiKeyByAppId = catchAsyncError(async (req, res) => {
     message: "App Api Key fetched successfully",
   });
 });
+const UpdateAppByAppId = catchAsyncError(async (req, res) => {
+  const user = req.user!;
+  const payload = req.body;
+  const appId = req.params.appId;
+  const result = await clientAppService.UpdateAppByAppId(appId, user.id, payload);
 
-const clientAppController = { creatApp, getUsersAllApps, getAppById, getAppApiKeyByAppId };
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: result,
+    message: "App updated successfully",
+  });
+});
+const deleteAppByAppId = catchAsyncError(async (req, res) => {
+  const user = req.user!;
+  const appId = req.params.appId;
+
+  const result = await clientAppService.deleteAppByAppId(appId, user.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: result,
+    message: "App deleted successfully",
+  });
+});
+const myAppCount = catchAsyncError(async (req, res) => {
+  const user = req.user!;
+  const count = await clientAppService.myAppCount(user.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: { count },
+    message: "Apps fetched successfully",
+  });
+});
+const clientAppController = {
+  creatApp,
+  getUsersAllApps,
+  getAppById,
+  getAppApiKeyByAppId,
+  UpdateAppByAppId,
+  deleteAppByAppId,
+  myAppCount,
+};
 
 export default clientAppController;

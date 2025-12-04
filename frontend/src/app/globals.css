@@ -1,2 +1,60 @@
 @import "tailwindcss";
 
+@theme inline {
+  --font-poppins: var(--font-poppins);
+  --font-inter: var(--font-inter);
+}
+
+@theme {
+  --breakpoint-desktop: 90rem;
+
+  --color-background: #f8f8fb;
+  --color-disabled: #b3b3bc;
+
+  --color-neutral-primary: #e5e5ea;
+  --color-border: #e2e8f0;
+}
+
+@layer base {
+  body {
+    @apply bg-background font-inter text-gray-950;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+  textarea {
+    @apply w-full overflow-auto rounded-md border bg-white px-3 py-2.5 text-sm text-black transition-colors duration-300 outline-none placeholder:text-gray-400 focus:ring-1 focus:ring-black;
+  }
+  label {
+    @apply mb-2 block text-sm font-medium text-black;
+  }
+
+  .center {
+    @apply flex items-center justify-center;
+  }
+}
+
+@layer components {
+  .wrapper {
+    @apply mx-auto max-w-[1180px];
+  }
+}
+
+@layer utilities {
+  .btn-primary {
+    @apply rounded-lg bg-blue-600 px-3 py-2 text-base font-semibold text-white shadow-md transition hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-400 disabled:opacity-70;
+  }
+  .btn-secondary {
+    @apply rounded-md border border-gray-200 bg-gray-100 px-4 py-2 text-neutral-900 shadow-xs hover:bg-gray-200 focus:outline-none;
+  }
+  .btn-danger {
+    @apply rounded bg-red-600 px-4 py-2 text-[14px] text-white hover:bg-red-700;
+  }
+  .form-label {
+    @apply mb-1 block text-sm/6 font-medium text-gray-900;
+  }
+
+  .form-error-message {
+    @apply mt-1 text-[13px] text-red-500;
+  }
+}

@@ -1,8 +1,9 @@
+import { App } from "@prisma/client";
 import AppError from "../../errors/AppError";
 import prisma from "../../lib/prisma";
-import appUtils from "../../utils/app.utils";
-import subscriptionUtils from "../../utils/subscription.utils";
+import subscriptionUtils from "../subscription/subscription.utils";
 import { TClientAppCreatePayload } from "./clientApp.interface";
+import clientAppUtils from "./clientApp.utils";
 
 const createApp = async (payload: TClientAppCreatePayload, userId: string) => {
   const subscriptionId = await subscriptionUtils.getUserCurrentSubscriptionId(userId);
@@ -13,25 +14,6 @@ const createApp = async (payload: TClientAppCreatePayload, userId: string) => {
 
   if (!subscription) {
     throw new AppError(404, "Subscription not found");
-  }
-
-  if (!subscription.stripeSubscriptionId) {
-    const isTrialDurationOver = subscriptionUtils.isDurationOver({
-      createdAt: subscription.createdAt,
-      durationInMonths: subscription.trialPeriodDays / 30,
-    });
-
-    if (isTrialDurationOver) {
-      throw new AppError(400, "Your trial subscription has expired. Please renew or update");
-    }
-  } else {
-    const isActive = await subscriptionUtils.isActiveSubscription(
-      subscription.stripeSubscriptionId
-    );
-
-    if (!isActive) {
-      throw new AppError(400, "Your subscription has expired");
-    }
   }
 
   const plan = await prisma.plan.findUnique({
@@ -51,7 +33,7 @@ const createApp = async (payload: TClientAppCreatePayload, userId: string) => {
     throw new AppError(400, "You have reached the maximum number of apps");
   }
 
-  const apiKey = appUtils.generateAppApiKey();
+  const apiKey = clientAppUtils.generateAppApiKey();
 
   const app = await prisma.app.create({
     data: {
@@ -94,7 +76,7 @@ const getAppById = async (appId: string, userId: string) => {
     throw new AppError(404, "App not found");
   }
 
-  return { ...app, apiKey: undefined };
+  return { ...app, apiKeyHash: undefined };
 };
 
 const getAppApiKeyByAppId = async (appId: string, userId: string) => {
@@ -117,11 +99,62 @@ const getAppApiKeyByAppId = async (appId: string, userId: string) => {
   return app;
 };
 
+const UpdateAppByAppId = async (appId: string, userId: string, payload: Partial<App>) => {
+  const app = await prisma.app.findUnique({
+    where: { id: appId },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (!app) {
+    throw new AppError(404, "App not found");
+  }
+
+  if (app.userId !== userId) {
+    throw new AppError(403, "Forbidden");
+  }
+
+  ["apiKeyHash", "userId"].forEach((key) => delete payload[key as keyof App]);
+
+  const result = await prisma.app.update({ where: { id: appId }, data: payload });
+  return { ...result, apiKeyHash: undefined };
+};
+
+const deleteAppByAppId = async (appId: string, userId: string) => {
+  const app = await prisma.app.findUnique({
+    where: { id: appId },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (!app) {
+    throw new AppError(404, "App not found");
+  }
+
+  if (app.userId !== userId) {
+    throw new AppError(403, "Forbidden");
+  }
+
+  await prisma.app.delete({ where: { id: appId } });
+
+  return null;
+};
+
+const myAppCount = async (userId: string) => {
+  const count = await prisma.app.count({ where: { userId } });
+  return count;
+};
+
 const clientAppService = {
   createApp,
   getUsersAllApps,
   getAppById,
   getAppApiKeyByAppId,
+  UpdateAppByAppId,
+  deleteAppByAppId,
+  myAppCount,
 };
 
 export default clientAppService;

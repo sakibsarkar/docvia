@@ -6,7 +6,7 @@ import { ZodError } from "zod";
 import AppError from "../errors/AppError";
 import handleDuplicateError from "../errors/handleDuplicateError";
 import handleZodError from "../errors/zodError";
-import { IErrorSources } from "../interface/error";
+import { IErrorSources } from "../interface/error.interface";
 
 // eslint-disable-next-line no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
@@ -21,7 +21,9 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
     },
   ];
 
-  console.dir(error, { depth: null, colors: true, maxArrayLength: null });
+  if (isDev) {
+    console.dir(error, { depth: null, colors: true, maxArrayLength: null });
+  }
 
   if (error instanceof ZodError && isDev) {
     const simpleErr = handleZodError(error);
@@ -42,7 +44,7 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
         message: error?.message,
       },
     ];
-  } else if (error instanceof Error) {
+  } else if (error instanceof Error && isDev) {
     message = error.message;
     errorMessages = [
       {

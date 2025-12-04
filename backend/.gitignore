@@ -4,3 +4,4 @@ dist
 .vercel
 
 /src/generated/prisma
+credentials.json
