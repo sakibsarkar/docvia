@@ -50,6 +50,17 @@ const googelAuthCallBack = catchAsyncError(async (req, res) => {
 
   const oauth2 = googleAuthUtils.makeOAuthClient();
   const { tokens } = await oauth2.getToken(String(code));
+  oauth2.setCredentials(tokens);
+
+  const userinfoResponse = await oauth2.request({
+    url: "https://www.googleapis.com/oauth2/v3/userinfo",
+  });
+
+  const { email, name, picture } = (userinfoResponse?.data || {}) as {
+    email: string;
+    name: string;
+    picture: string;
+  };
 
   const tokenPayload = {
     accessToken: tokens.access_token || null,
@@ -57,6 +68,9 @@ const googelAuthCallBack = catchAsyncError(async (req, res) => {
     scope: tokens.scope || null,
     tokenType: tokens.token_type || null,
     expiry_date: tokens.expiry_date ? new Date(tokens.expiry_date) : new Date(),
+    email,
+    picture,
+    name,
   };
 
   await googleAuthUtils.saveToken(state as string, tokenPayload);

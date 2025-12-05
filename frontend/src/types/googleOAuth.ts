@@ -2,6 +2,9 @@ export interface IGoogleConnection {
   connected: boolean;
   hasRequiredScopes: boolean;
   createdAt: string;
+  name?: string;
+  email?: string;
+  picture?: string;
 }
 
 export interface IGoogleDoc {
@@ -11,6 +14,6 @@ export interface IGoogleDoc {
   owners: [
     {
       displayName: string;
-    }
+    },
   ];
 }

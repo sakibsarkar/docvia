@@ -77,6 +77,9 @@ model GoogleAuthToken {
   user         User     @relation(fields: [userId], references: [id])
   accessToken  String?
   refreshToken String?
+  email        String?  @default("")
+  name         String?  @default("")
+  picture      String?  @default("")
   scope        String?
   tokenType    String?
   expiry_date  DateTime @db.Timestamptz(3)

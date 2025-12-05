@@ -1,12 +1,15 @@
 import { GoogleAuthToken } from "@prisma/client";
+import axios from "axios";
 import { google } from "googleapis";
 import config from "../../config";
 import prisma from "../../lib/prisma";
 
 const GOOGLE_AUTH_SCOPES = [
-  // "https://www.googleapis.com/auth/drive.metadata.readonly",
+  "https://www.googleapis.com/auth/userinfo.profile",
+  "https://www.googleapis.com/auth/userinfo.email",
+  "https://www.googleapis.com/auth/drive.metadata.readonly",
   "https://www.googleapis.com/auth/documents.readonly", // structured read
-  // "https://www.googleapis.com/auth/drive.readonly",    // OR export read
+  // "https://www.googleapis.com/auth/drive.readonly", // OR export read
 ];
 function areScopesSatisfied(grantedScopes: string) {
   if (!grantedScopes) {
@@ -39,6 +42,9 @@ async function saveToken(userId: string, tokens: Omit<GoogleAuthToken, "userId" 
       ? new Date(tokens.expiry_date).toISOString()
       : new Date().toISOString(),
     refreshToken: tokens.refreshToken ?? null,
+    email: tokens.email ?? null,
+    picture: tokens.picture ?? null,
+    name: tokens.name ?? null,
   };
   // Only update refresh_token if Google provided one (first consent / re-consent)
   if (typeof tokens.refreshToken !== "undefined") {
@@ -85,13 +91,23 @@ async function getAuthForUser(userId: string) {
       scope: t.scope ?? row.scope,
       tokenType: t.token_type ?? row.tokenType,
       expiry_date: new Date(t.expiry_date ?? row.expiry_date),
+      email: row.email,
+      picture: row.picture,
+      name: row.name,
     };
     await saveToken(userId, merged);
   });
 
   return oauth2;
 }
-
+const validateGoogleToken = async (accessToken: string) => {
+  try {
+    await axios.get(`https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`);
+    return true;
+  } catch {
+    return false;
+  }
+};
 const googleAuthUtils = {
   GOOGLE_AUTH_SCOPES,
   areScopesSatisfied,
@@ -100,6 +116,7 @@ const googleAuthUtils = {
   saveToken,
   loadAuthTokenByUserId,
   getAuthForUser,
+  validateGoogleToken,
 };
 
 export default googleAuthUtils;

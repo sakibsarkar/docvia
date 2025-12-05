@@ -1,12 +1,8 @@
 import { api } from "@/redux/api/api";
-import { IGoogleDoc } from "@/types";
+import { IGoogleConnection, IGoogleDoc } from "@/types";
 import { generateQueryParams } from "../../../utils/params";
 
-export interface IGoogleConnection {
-  connected: boolean;
-  hasRequiredScopes: boolean;
-  createdAt: string;
-}
+
 
 export interface IGoogleDocOwner {
   displayName: string;

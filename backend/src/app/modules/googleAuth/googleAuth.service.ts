@@ -37,10 +37,28 @@ const myGoogleConnection = async (userId: string) => {
     return { connected: false, hasRequiredScopes: false };
   }
 
-  const now = new Date();
-  const isExpired = row.expiry_date ? new Date(row.expiry_date) < now : true;
+  let isExpired = true;
+  if (row.expiry_date) {
+    isExpired = new Date(row.expiry_date) < new Date();
+  }
 
-  if (isExpired && row.refreshToken) {
+  const isAccessTokenValid =
+    row.accessToken && !isExpired
+      ? await googleAuthUtils.validateGoogleToken(row.accessToken)
+      : false;
+
+  if (!isAccessTokenValid) {
+    return {
+      connected: false,
+      hasRequiredScopes: false,
+      createdAt: row.createdAt,
+      email: row.email,
+      name: row.name,
+      picture: row.picture,
+    };
+  }
+
+  if ((!isAccessTokenValid || isExpired) && row.refreshToken) {
     try {
       const oauth2 = googleAuthUtils.makeOAuthClient();
       oauth2.setCredentials({
@@ -65,7 +83,14 @@ const myGoogleConnection = async (userId: string) => {
   const grantedScopes = row.scope || "";
   const hasRequiredScopes = googleAuthUtils.areScopesSatisfied(grantedScopes);
 
-  return { connected: true, hasRequiredScopes, createdAt: row.createdAt };
+  return {
+    connected: true,
+    hasRequiredScopes,
+    createdAt: row.createdAt,
+    email: row.email,
+    name: row.name,
+    picture: row.picture,
+  };
 };
 
 const myGoogleDocList = async (
