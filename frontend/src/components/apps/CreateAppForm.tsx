@@ -3,8 +3,8 @@
 import { FormErrorMessage } from "@/components";
 import { useCreateAppMutation } from "@/redux/features/apps/apps.api";
 import type { IQueryMutationErrorResponse } from "@/types";
-import { LinkIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { Field, Form, Formik } from "formik";
+import { Link, Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as yup from "yup";
@@ -111,7 +111,7 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
                     </label>
                     <p className="my-2 text-sm text-gray-500">This is your app’s visible name.</p>
                     <div className="relative">
-                      <PencilSquareIcon className="absolute top-0 bottom-0 left-2 my-auto h-4 w-4 text-gray-400" />
+                      <Pencil className="absolute top-0 bottom-0 left-2 my-auto h-4 w-4 text-gray-400" />
                       <Field
                         id="appName"
                         name="appName"
@@ -145,7 +145,7 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
                       </span>
                     </p>
                     <div className="relative">
-                      <LinkIcon className="absolute top-0 bottom-0 left-2 my-auto h-4 w-4 text-gray-400" />
+                      <Link className="absolute top-0 bottom-0 left-2 my-auto h-4 w-4 text-gray-400" />
                       <Field
                         id="websiteUrl"
                         name="websiteUrl"

@@ -4,21 +4,16 @@
 import { AppsList, CreateNewAppPopup } from "@/components";
 import { useGetAppCountQuery } from "@/redux/features/apps/apps.api";
 import { AppStatus } from "@/types";
-import {
-  ArchiveBoxIcon,
-  MagnifyingGlassIcon,
-  PlusIcon,
-  RocketLaunchIcon,
-  WrenchScrewdriverIcon,
-} from "@heroicons/react/24/outline";
+import { Archive, Plus, Rocket, Search, Wrench } from "lucide-react";
+
 import { ComponentType, SVGProps, useState } from "react";
 
 type TabId = AppStatus; // "development" | "production" | "archive"
 
 const tabs: { id: TabId; label: string; icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
-  { id: "development", label: "Development", icon: WrenchScrewdriverIcon },
-  { id: "production", label: "Production", icon: RocketLaunchIcon },
-  { id: "archive", label: "Archive", icon: ArchiveBoxIcon },
+  { id: "development", label: "Development", icon: Wrench },
+  { id: "production", label: "Production", icon: Rocket },
+  { id: "archive", label: "Archive", icon: Archive },
 ];
 
 export default function MyApps() {
@@ -42,7 +37,7 @@ export default function MyApps() {
         <div className="flex items-center justify-between gap-2">
           {/* Search */}
           <div className="relative" aria-label="Search App">
-            <MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
               placeholder="Search Apps"
@@ -57,7 +52,7 @@ export default function MyApps() {
             onClick={() => setOpenModal(true)}
             className="inline-flex h-9 items-center gap-2 rounded-md border border-gray-200 bg-blue-600 px-3 text-sm font-normal text-white hover:bg-blue-700"
           >
-            <PlusIcon className="h-4 w-4 shrink-0 text-white" />
+            <Plus className="h-4 w-4 shrink-0 text-white" />
             New App
           </button>
         </div>
@@ -89,13 +84,11 @@ export default function MyApps() {
       {/* Content */}
       <div className="h-full">
         {/* Development tab shows ALL apps for now */}
-        {activeTab === "development" && (
-          <AppsList status={activeTab} EmptyIcon={WrenchScrewdriverIcon} />
-        )}
+        {activeTab === "development" && <AppsList status={activeTab} EmptyIcon={Wrench} />}
 
-        {activeTab === "production" && <AppsList status={activeTab} EmptyIcon={RocketLaunchIcon} />}
+        {activeTab === "production" && <AppsList status={activeTab} EmptyIcon={Rocket} />}
 
-        {activeTab === "archive" && <AppsList status={activeTab} EmptyIcon={ArchiveBoxIcon} />}
+        {activeTab === "archive" && <AppsList status={activeTab} EmptyIcon={Archive} />}
       </div>
 
       {/* Create New App Popup */}

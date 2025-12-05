@@ -1,7 +1,7 @@
 "use client";
 
 import { SearchBar } from "@/components";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 
 const Shortcuts = () => {
@@ -19,7 +19,7 @@ const Shortcuts = () => {
           />
 
           <button className="flex items-center gap-1 rounded bg-blue-500 px-4 py-2 text-[14px] text-white hover:bg-blue-600">
-            <PlusIcon className="h-4 w-4 text-white" />
+            <Plus className="h-4 w-4 text-white" />
             Add Shortcut
           </button>
         </div>

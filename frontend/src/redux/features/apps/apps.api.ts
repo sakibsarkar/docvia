@@ -23,18 +23,41 @@ const appsApi = api.injectEndpoints({
       },
       providesTags: ["apps"],
     }),
-    getAppById: builder.query<IApp, string>({
+    getAppSecretKeyByAppId: builder.query<{ data: { apiKeyHash: string; userId: string } }, string>(
+      {
+        query: (appId) => {
+          return {
+            url: `/app/get/key/${appId}`,
+            method: "GET",
+          };
+        },
+        providesTags: ["apps"],
+      }
+    ),
+    getAppById: builder.query<{ data: IApp }, string>({
       query: (id) => ({
         url: `/app/get/${id}`,
         method: "GET",
       }),
       providesTags: ["apps"],
     }),
-    createApp: builder.mutation<IApp, Pick<IApp, "appName" | "authorizedOrigin" | "googleDocId">>({
+    createApp: builder.mutation<
+      { data: IApp },
+      Pick<IApp, "appName" | "authorizedOrigin" | "googleDocId">
+    >({
       query: (app) => ({
         url: "/app/create",
         method: "POST",
         body: app,
+      }),
+      invalidatesTags: ["apps"],
+    }),
+
+    updateAppByAppId: builder.mutation<{ data: IApp }, { appId: string; payload: Partial<IApp> }>({
+      query: ({ appId, payload }) => ({
+        url: `/app/update/${appId}`,
+        method: "PATCH",
+        body: payload,
       }),
       invalidatesTags: ["apps"],
     }),
@@ -54,4 +77,7 @@ export const {
   useCreateAppMutation,
   useGetAppCountQuery,
   useDeleteAppMutation,
+  useUpdateAppByAppIdMutation,
+  useGetAppSecretKeyByAppIdQuery,
+  useLazyGetAppSecretKeyByAppIdQuery
 } = appsApi;

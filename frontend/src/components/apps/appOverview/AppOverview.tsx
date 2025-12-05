@@ -1,116 +1,104 @@
 "use client";
-
 import { DeleteAppPopup, FormErrorMessage } from "@/components";
-import { CheckCircleIcon, ClipboardIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
-import { Field, Form, Formik } from "formik";
+import { useGetAppByIdQuery, useUpdateAppByAppIdMutation } from "@/redux/features/apps/apps.api";
+import { IApp, IQueryMutationErrorResponse } from "@/types";
+import { Field, Form, Formik, FormikHelpers } from "formik";
+import { CheckCircle, CloudAlert } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 import * as yup from "yup";
+import AppOverviewSkeleton from "./AppOverviewSkeleton";
+import AppSecret from "./AppSecret";
 
-type FormValues = {
-  name: string;
-  domain: string;
-  avatar: File | null;
-  isActive: boolean; // NEW
-};
+const ACCEPTED_TYPES: string[] = ["image/jpeg", "image/png"] as const;
+const MAX_BYTES = 5_00_000; // 0.5MB
 
-const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/gif"] as const;
-type AcceptedType = (typeof ACCEPTED_TYPES)[number];
-const MAX_BYTES = 1_000_000; // 1MB
+type TFormValues = Pick<IApp, "appName" | "authorizedOrigin" | "isActive" | "description">;
 
 const schema = yup.object({
-  name: yup.string().required("App name is required"),
-  domain: yup
+  appName: yup.string().required("App name is required"),
+  authorizedOrigin: yup
     .string()
     .required("Website URL is required")
     .matches(
       /^https:\/\/(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/,
       "Enter a valid root URL (e.g., https://example.com)"
     ),
-  avatar: yup
-    .mixed<File>()
-    .test("file-type", "Only JPG, PNG, or GIF are allowed", (file) =>
-      !file ? true : ACCEPTED_TYPES.includes(file.type as AcceptedType)
-    )
-    .test("file-size", "File must be ≤ 1MB", (file) => (!file ? true : file.size <= MAX_BYTES)),
+
   isActive: yup.boolean().required(), // NEW
+  description: yup.string().max(200, "Description can't be longer than 200 characters").optional(),
 });
 
-export default function AppDetailsPage() {
-  const params = useParams<{ slug?: string }>();
-  const slug = (params?.slug as string) || "";
-  const appId = slug || "app_dummy_123";
+const AppOverview = () => {
+  const params = useParams<{ appId?: string }>();
+  const appId = params?.appId as string;
 
-  const [copiedAppId, setCopiedAppId] = useState(false);
+  const [updateApp, { isLoading: isUpdating }] = useUpdateAppByAppIdMutation();
+
+  const { data, isLoading } = useGetAppByIdQuery(appId);
+
   const [openPopup, setOpenPopup] = useState(false);
 
-  // Local preview state for avatar
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!avatarFile) {
-      setPreviewUrl(null);
+  const handleUpate = async (values: TFormValues, { resetForm }: FormikHelpers<TFormValues>) => {
+    const res = await updateApp({
+      appId,
+      payload: values,
+    });
+    const error = res.error as IQueryMutationErrorResponse;
+
+    if (error) {
+      toast.error(error?.data?.message || "Something went wrong. Please try again.");
       return;
     }
-    const url = URL.createObjectURL(avatarFile);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [avatarFile]);
 
-  const initialValues: FormValues = {
-    name: "Your App Name",
-    domain: "https://example.com",
-    avatar: null,
-    isActive: true,
+    toast.success("App updated successfully!");
   };
+  const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-  const copyAppId = async () => {
-    try {
-      await navigator.clipboard.writeText(appId);
-      setCopiedAppId(true);
-      setTimeout(() => setCopiedAppId(false), 1200);
-    } catch {
-      /* ignore */
-    }
-  };
+    const isValidFileType = ACCEPTED_TYPES.includes(file.type);
+    const isFileSizeValid = file.size <= MAX_BYTES;
 
-  interface FormikSetters {
-    setSubmitting: (isSubmitting: boolean) => void;
-    setStatus: (status: FormStatus | undefined) => void;
-  }
-
-  interface FormStatus {
-    saved?: true;
-    error?: string;
-  }
-
-  const onSubmit = async (
-    values: FormValues,
-    { setSubmitting, setStatus }: FormikSetters
-  ): Promise<void> => {
-    setStatus(undefined);
-    try {
-      // TODO: call your API with { appId, ...values }
-      // values.avatar is a File | null
-      await new Promise((r) => setTimeout(r, 600));
-      setStatus({ saved: true as const });
-    } catch {
-      setStatus({
-        error: "Something went wrong while saving. Please try again.",
+    if (!isValidFileType) {
+      toast.error("Please select a valid image file.", {
+        description: "Supported file types: .jpg, .png",
       });
-    } finally {
-      setSubmitting(false);
+      return;
     }
+
+    if (!isFileSizeValid) {
+      toast.error("Image file is too large.", {
+        description: "Please select a file less than 500KB.",
+      });
+      return;
+    }
+
+    setAvatarFile(file);
   };
+  const appData = data?.data;
+  const initialValues: TFormValues = {
+    appName: appData?.appName || "",
+    authorizedOrigin: appData?.authorizedOrigin || "",
+    isActive: appData?.isActive || false,
+    description: appData?.description || "",
+  };
+
+  if (isLoading) {
+    return <AppOverviewSkeleton />;
+  }
 
   return (
     <section>
-      <Formik initialValues={initialValues} validationSchema={schema} onSubmit={onSubmit}>
-        {({ errors, touched, isSubmitting, status, setFieldValue, values }) => {
-          const nameHasError = touched.name && !!errors.name;
-          const domainHasError = touched.domain && !!errors.domain;
+      <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleUpate}>
+        {({ errors, touched, status, values }) => {
+          const nameHasError = touched.appName && !!errors.appName;
+          const domainHasError = touched.authorizedOrigin && !!errors.authorizedOrigin;
+          const descriptionHasError = touched.description && !!errors.description;
 
           return (
             <Form className="rounded-md border border-gray-100 bg-white p-5 shadow md:p-6">
@@ -125,10 +113,11 @@ export default function AppDetailsPage() {
                     <p className="mt-1 text-xs text-gray-500">This is your app’s visible name.</p>
 
                     <Field
-                      id="name"
-                      name="name"
+                      id="appName"
+                      name="appName"
                       type="text"
                       autoComplete="off"
+                      placeholder="My Custom App"
                       aria-invalid={nameHasError}
                       aria-describedby={nameHasError ? "name-error" : undefined}
                       className={`mt-3 w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
@@ -138,7 +127,7 @@ export default function AppDetailsPage() {
 
                     {nameHasError && (
                       <div id="name-error" className="mt-2">
-                        <FormErrorMessage message={errors.name as string} />
+                        <FormErrorMessage message={errors.appName as string} />
                       </div>
                     )}
                   </div>
@@ -166,10 +155,10 @@ export default function AppDetailsPage() {
                           aria-checked={values.isActive}
                           // hide the native checkbox but keep it focusable
                           className="peer sr-only"
-                          disabled={isSubmitting}
+                          disabled={isUpdating}
                         />
                         <span
-                          className={`relative inline-block h-5 w-9 rounded-full transition-colors ${values.isActive ? "bg-green-500" : "bg-gray-300"} peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-blue-500 after:absolute after:top-0.5 after:left-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform ${values.isActive ? "after:translate-x-4" : "after:translate-x-0"} `}
+                          className={`relative inline-block h-5 w-9 rounded-full transition-colors ${values.isActive ? "bg-green-500" : "bg-gray-300"} cursor-pointer peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-blue-500 after:absolute after:top-0.5 after:left-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform ${values.isActive ? "after:translate-x-4" : "after:translate-x-0"} `}
                           aria-hidden="true"
                         />
                       </label>
@@ -178,7 +167,7 @@ export default function AppDetailsPage() {
                   {/* Website URL */}
                   <div>
                     <label
-                      htmlFor="domain"
+                      htmlFor="authorizedOrigin"
                       className="block text-[13px] font-semibold text-gray-900"
                     >
                       Website URL
@@ -188,9 +177,10 @@ export default function AppDetailsPage() {
                     </p>
 
                     <Field
-                      id="domain"
-                      name="domain"
+                      id="authorizedOrigin"
+                      name="authorizedOrigin"
                       type="url"
+                      placeholder="https://mydomain.com"
                       autoComplete="off"
                       aria-invalid={domainHasError}
                       aria-describedby={domainHasError ? "domain-error" : undefined}
@@ -201,7 +191,7 @@ export default function AppDetailsPage() {
 
                     {domainHasError && (
                       <div id="domain-error" className="mt-2">
-                        <FormErrorMessage message={errors.domain as string} />
+                        <FormErrorMessage message={errors.authorizedOrigin as string} />
                       </div>
                     )}
                   </div>
@@ -215,15 +205,24 @@ export default function AppDetailsPage() {
                       Description
                     </label>
                     <div className="mt-2">
-                      <textarea
+                      <Field
+                        as="textarea"
                         id="description"
                         name="description"
-                        rows={3}
-                        className={`mt-1 w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                          domainHasError ? "border-red-400 focus:ring-0" : "border-gray-300"
+                        placeholder="My app description..."
+                        className={`mt-1 min-h-[100px] w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                          descriptionHasError ? "border-red-400 focus:ring-0" : "border-gray-300"
                         }`}
                         defaultValue={""}
                       />
+                      <span className="text-[12px] text-gray-500">
+                        {values.description?.length || 0} / 200
+                      </span>
+                      {descriptionHasError && (
+                        <div id="domain-error" className="mt-2">
+                          <FormErrorMessage message={errors.description as string} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -235,8 +234,9 @@ export default function AppDetailsPage() {
                     <Image
                       alt="Image preview"
                       src={
-                        previewUrl ??
-                        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        avatarFile
+                          ? URL.createObjectURL(avatarFile)
+                          : `https://ui-avatars.com/api/?name=${data?.data?.appName}&size=128`
                       }
                       className="size-24 flex-none rounded-lg border border-gray-200 object-cover"
                       width={96}
@@ -249,11 +249,7 @@ export default function AppDetailsPage() {
                         type="file"
                         accept="image/jpeg,image/png,image/gif"
                         className="hidden"
-                        onChange={(e) => {
-                          const file = e.currentTarget.files?.[0] ?? null;
-                          setAvatarFile(file);
-                          setFieldValue("avatar", file);
-                        }}
+                        onChange={handleAvatarFileChange}
                       />
                       <label
                         htmlFor="avatarInput"
@@ -262,71 +258,36 @@ export default function AppDetailsPage() {
                         Change Image
                       </label>
 
-                      <p className="mt-1 text-xs/5 text-gray-400">JPG, GIF or PNG. 1MB max.</p>
-                      {!!touched.avatar && !!errors.avatar && (
-                        <p className="mt-1 text-[14px] text-red-600">{String(errors.avatar)}</p>
-                      )}
+                      <p className="mt-1 text-xs/5 text-gray-400">JPG or PNG. Max 500KB.</p>
                     </div>
                   </div>
 
                   {/* App ID (read-only) */}
-                  <div className="rounded-md">
-                    <label className="text-[13px] font-medium text-gray-900">App ID</label>
-                    <p className="text-[12px] text-gray-600">
-                      Used when interacting with the API. This ID is unique to your app and cannot
-                      be changed.
-                    </p>
-                    <div className="mt-2 flex items-center gap-2">
-                      <input
-                        readOnly
-                        disabled
-                        className="flex-1 rounded-md border border-gray-200 bg-gray-100 px-3 py-2.5 text-sm text-gray-700"
-                        aria-label="App ID"
-                        value={appId}
-                      />
-                      <button
-                        type="button"
-                        onClick={copyAppId}
-                        className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 md:w-[110px]"
-                      >
-                        {copiedAppId ? (
-                          <span className="flex items-center gap-1 text-green-600">
-                            <CheckCircleIcon className="h-4 w-4" /> Copied
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            Copy <ClipboardIcon className="h-4 w-4" />
-                          </span>
-                        )}
-                      </button>
-                    </div>
-                  </div>
+                  <AppSecret appId={appId} />
                 </div>
               </div>
 
               {/* Save / feedback */}
-              <div className="mt-6 flex items-center gap-3">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="inline-flex w-full items-center justify-center rounded-md bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-60"
-                >
-                  {isSubmitting ? "Saving..." : "Save"}
-                </button>
-
+              <div className="mt-6 flex flex-col items-start justify-start gap-3">
                 {status?.saved && (
                   <span className="inline-flex items-center gap-1 text-sm text-green-700">
-                    <CheckCircleIcon className="h-4 w-4" />
+                    <CheckCircle className="h-4 w-4" />
                     Saved
                   </span>
                 )}
-
                 {status?.error && (
                   <span className="inline-flex items-center gap-1 text-sm text-red-700">
-                    <InformationCircleIcon className="h-4 w-4" />
+                    <CloudAlert className="h-4 w-4" />
                     {status.error}
                   </span>
-                )}
+                )}{" "}
+                <button
+                  type="submit"
+                  disabled={isUpdating}
+                  className="inline-flex w-full items-center justify-center rounded-md bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-60"
+                >
+                  {isUpdating ? "Saving..." : "Save"}
+                </button>
               </div>
             </Form>
           );
@@ -353,4 +314,6 @@ export default function AppDetailsPage() {
       </div>
     </section>
   );
-}
+};
+
+export default AppOverview;

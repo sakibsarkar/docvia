@@ -1,7 +1,7 @@
 import useDebounce from "@/hooks/useDebounce";
 import { useGoogleDocListQuery } from "@/redux/features/googleOAuth/googleOAuth.api";
 import { IGoogleDoc } from "@/types";
-import { CheckIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import { Check, FileMinusCorner } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 // helper (optional)
@@ -86,7 +86,7 @@ const SelectGoogleDoc = ({ onDocSelect }: { onDocSelect: (doc: IGoogleDoc) => vo
                       isSelected ? "bg-blue-500" : "bg-white"
                     }`}
                   >
-                    {isSelected ? <CheckIcon className="size-4 text-white" /> : ""}
+                    {isSelected ? <Check className="size-4 text-white" /> : ""}
                   </span>
                   <div className="flex items-start justify-start gap-[10px]">
                     <Image width={20} height={20} src={"/images/google/docs.png"} alt="" />
@@ -145,7 +145,7 @@ const SelectGoogleDoc = ({ onDocSelect }: { onDocSelect: (doc: IGoogleDoc) => vo
         <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white ring-1 ring-gray-200 ring-inset">
-              <DocumentTextIcon className="h-6 w-6 text-gray-600" />
+              <FileMinusCorner className="h-6 w-6 text-gray-600" />
             </div>
             <div className="min-w-0 flex-1">
               <h3 className="text-sm font-semibold text-gray-900">No Google Docs found</h3>

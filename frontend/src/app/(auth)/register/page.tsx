@@ -4,9 +4,9 @@ import { FormErrorMessage, InputClass } from "@/components";
 import { useAppSelector } from "@/hooks";
 import { useRegisterCustomerMutation } from "@/redux/features/user/user.api";
 import type { IQueryMutationErrorResponse } from "@/types";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Form, Formik } from "formik";
 import Cookies from "js-cookie";
+import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -187,11 +187,7 @@ export default function Register() {
                     tabIndex={-1}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? (
-                      <EyeIcon className="h-5 w-5" />
-                    ) : (
-                      <EyeSlashIcon className="h-5 w-5" />
-                    )}
+                    {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                   </button>
                 </div>
 
@@ -245,9 +241,9 @@ export default function Register() {
                     }
                   >
                     {showConfirmPassword ? (
-                      <EyeIcon className="h-5 w-5" />
+                      <Eye className="h-5 w-5" />
                     ) : (
-                      <EyeSlashIcon className="h-5 w-5" />
+                      <EyeOff className="h-5 w-5" />
                     )}
                   </button>
                 </div>

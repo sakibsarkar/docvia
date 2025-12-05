@@ -115,7 +115,7 @@ const UpdateAppByAppId = async (appId: string, userId: string, payload: Partial<
     throw new AppError(403, "Forbidden");
   }
 
-  ["apiKeyHash", "userId"].forEach((key) => delete payload[key as keyof App]);
+  ["apiKeyHash", "userId", "id"].forEach((key) => delete payload[key as keyof App]);
 
   const result = await prisma.app.update({ where: { id: appId }, data: payload });
   return { ...result, apiKeyHash: undefined };

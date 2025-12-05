@@ -67,6 +67,8 @@ model App {
   apiKeyHash       String   @unique
   googleDocId      String   @default("")
   userId           String
+  isActive         Boolean  @default(false)
+  description      String?  @default("")
   user             User     @relation(fields: [userId], references: [id])
   createdAt        DateTime @default(now()) @db.Timestamptz(3)
   updatedAt        DateTime @updatedAt @db.Timestamptz(3)

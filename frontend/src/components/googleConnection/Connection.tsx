@@ -3,9 +3,9 @@
 import { baseUrl } from "@/redux/api/api";
 import { useGoogleConnectionStatusQuery } from "@/redux/features/googleOAuth/googleOAuth.api";
 import type { IGoogleConnection } from "@/types";
-import { ArrowPathIcon, BellAlertIcon, CheckIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import ConnectionDivSkeleton from "./ConnectionDivSkeleton";
+import { Check, CloudAlert, RefreshCcw } from "lucide-react";
 
 const Connection = () => {
   const { data, isLoading } = useGoogleConnectionStatusQuery();
@@ -32,11 +32,11 @@ const Connection = () => {
             <div className="flex items-center gap-3">
               {allGood ? (
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-                  <CheckIcon className="h-5 w-5 text-emerald-600" />
+                  <Check className="h-5 w-5 text-emerald-600" />
                 </div>
               ) : (
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-                  <BellAlertIcon className="h-5 w-5 text-red-600" />
+                  <CloudAlert className="h-5 w-5 text-red-600" />
                 </div>
               )}
               <div>
@@ -115,7 +115,7 @@ const Connection = () => {
                 href={`${baseUrl}/google/connect`}
                 className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700"
               >
-                <ArrowPathIcon className="h-4 w-4" />
+                <RefreshCcw className="h-4 w-4" />
                 Reconnect Google
               </Link>
             </div>

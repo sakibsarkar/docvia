@@ -1,16 +1,11 @@
 "use client";
 
-import * as yup from "yup";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import { useEffect, useMemo, useState } from "react";
-import { Formik, Form, Field, FormikHelpers } from "formik";
-import {
-  ClipboardIcon,
-  CheckCircleIcon,
-  InformationCircleIcon,
-  ClipboardDocumentCheckIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import * as yup from "yup";
+
 import { DeleteWidgetPopup, FormErrorMessage } from "@/components";
+import { CircleCheck, Clipboard, ClipboardCheck, CloudAlert, Plus } from "lucide-react";
 import { useParams } from "next/navigation";
 
 type FormValues = {
@@ -228,7 +223,7 @@ const ChatWidget = () => {
           </div>
 
           <button className="flex items-center gap-1 rounded bg-blue-500 px-4 py-2 text-[14px] text-white hover:bg-blue-600">
-            <PlusIcon className="h-4 w-4 text-white" /> Add Widget
+            <Plus className="h-4 w-4 text-white" /> Add Widget
           </button>
         </div>
       </div>
@@ -329,13 +324,12 @@ const ChatWidget = () => {
                         <span className="flex items-center gap-1">
                           {copiedId ? (
                             <span className="flex items-center gap-1 text-green-500">
-                              Copied{" "}
-                              <ClipboardDocumentCheckIcon className="h-4 w-4 text-green-500" />{" "}
+                              Copied <ClipboardCheck className="h-4 w-4 text-green-500" />{" "}
                             </span>
                           ) : (
                             <span className="flex items-center gap-1">
                               Copy
-                              <ClipboardIcon className="h-4 w-4" />
+                              <Clipboard className="h-4 w-4" />
                             </span>
                           )}
                         </span>
@@ -369,13 +363,12 @@ const ChatWidget = () => {
                         <span className="flex items-center gap-1">
                           {copiedLink ? (
                             <span className="flex items-center gap-1 text-green-500">
-                              Copied{" "}
-                              <ClipboardDocumentCheckIcon className="h-4 w-4 text-green-500" />{" "}
+                              Copied <ClipboardCheck className="h-4 w-4 text-green-500" />{" "}
                             </span>
                           ) : (
                             <span className="flex items-center gap-1">
                               Copy
-                              <ClipboardIcon className="h-4 w-4" />
+                              <Clipboard className="h-4 w-4" />
                             </span>
                           )}
                         </span>
@@ -407,13 +400,13 @@ const ChatWidget = () => {
                 <span className="min-h-[20px]">
                   {status?.saved && (
                     <span className="inline-flex items-center gap-1 text-sm text-green-700">
-                      <CheckCircleIcon className="h-4 w-4" />
+                      <CircleCheck className="h-4 w-4" />
                       Saved
                     </span>
                   )}
                   {status?.error && (
                     <span className="inline-flex items-center gap-1 text-sm text-red-700">
-                      <InformationCircleIcon className="h-4 w-4" />
+                      <CloudAlert className="h-4 w-4" />
                       {status.error}
                     </span>
                   )}

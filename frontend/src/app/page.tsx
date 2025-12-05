@@ -1,18 +1,19 @@
 "use client";
 
 import { Footer, Header } from "@/components";
-import Link from "next/link";
-import Image from "next/image";
 import {
+  ArrowRight,
   ArrowRightIcon,
-  CheckCircleIcon,
-  BoltIcon,
-  Cog6ToothIcon,
-  ShieldCheckIcon,
-  SparklesIcon,
-  GlobeAltIcon,
-  QuestionMarkCircleIcon,
-} from "@heroicons/react/24/outline";
+  Bolt,
+  CheckCircle,
+  CircleQuestionMark,
+  Gauge,
+  GlobeLock,
+  MessageSquareQuote,
+  ServerCog,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -39,7 +40,7 @@ export default function Home() {
               href="/dashboard"
               className="flex items-center gap-1 rounded-3xl bg-blue-500 px-6 py-2.5 text-white hover:bg-blue-600"
             >
-              Start for free <ArrowRightIcon className="inline-block h-4 w-4" />
+              Start for free <ArrowRight className="inline-block h-4 w-4" />
             </Link>
             <p className="text-gray-400">No credit card required</p>
           </div>
@@ -67,32 +68,32 @@ export default function Home() {
             </h2>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               <FeatureCard
-                icon={<BoltIcon className="h-6 w-6" />}
+                icon={<Bolt className="h-6 w-6" />}
                 title="5‑minute setup"
                 desc="Drop in our widget, paste your App ID, and you’re live. No complex wiring."
               />
               <FeatureCard
-                icon={<ShieldCheckIcon className="h-6 w-6" />}
+                icon={<Gauge className="h-6 w-6" />}
                 title="Secure by default"
                 desc="Use a service account and short‑lived access tokens to keep your data safe."
               />
               <FeatureCard
-                icon={<Cog6ToothIcon className="h-6 w-6" />}
+                icon={<ServerCog className="h-6 w-6" />}
                 title="Configurable apps"
                 desc="Create multiple apps per workspace—each linked to its own Google Doc and site."
               />
               <FeatureCard
-                icon={<SparklesIcon className="h-6 w-6" />}
+                icon={<MessageSquareQuote className="h-6 w-6" />}
                 title="Quality answers"
                 desc="We parse your Google Doc in real‑time and ground model responses in your content."
               />
               <FeatureCard
-                icon={<GlobeAltIcon className="h-6 w-6" />}
+                icon={<GlobeLock className="h-6 w-6" />}
                 title="Works anywhere"
                 desc="Use on any framework or static site. First‑class Next.js experience included."
               />
               <FeatureCard
-                icon={<CheckCircleIcon className="h-6 w-6" />}
+                icon={<CheckCircle className="h-6 w-6" />}
                 title="Built‑in analytics"
                 desc="Track conversations, deflection, and lead capture to prove ROI."
               />
@@ -287,7 +288,7 @@ function Step({ step, title, desc }: { step: string; title: string; desc: string
 function Badge({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700">
-      <CheckCircleIcon className="h-4 w-4" /> {children}
+      <CheckCircle className="h-4 w-4" /> {children}
     </span>
   );
 }
@@ -297,7 +298,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     <details className="group p-5">
       <summary className="flex cursor-pointer list-none items-center justify-between">
         <span className="font-medium">{q}</span>
-        <QuestionMarkCircleIcon className="h-5 w-5 text-gray-400 transition-transform group-open:rotate-180" />
+        <CircleQuestionMark className="h-5 w-5 text-gray-400 transition-transform group-open:rotate-180" />
       </summary>
       <p className="mt-3 text-sm text-gray-600">{a}</p>
     </details>

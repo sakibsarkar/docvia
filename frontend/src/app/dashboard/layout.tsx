@@ -1,8 +1,5 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import {
   Dialog,
   DialogBackdrop,
@@ -13,29 +10,32 @@ import {
   MenuItems,
   TransitionChild,
 } from "@headlessui/react";
-
-import {
-  ArrowRightStartOnRectangleIcon,
-  Bars3Icon,
-  Cog6ToothIcon,
-  FolderOpenIcon,
-  LinkIcon,
-  UserCircleIcon,
-  XMarkIcon,
-  Squares2X2Icon,
-} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import Image from "next/image";
 import { useLogoutUserMutation } from "@/redux/features/user/user.api";
 import { logout as logoutAction } from "@/redux/features/user/user.slice";
 import { IQueryMutationErrorResponse } from "@/types";
+import {
+  Cable,
+  CircleUserRound,
+  Folder,
+  LayoutDashboard,
+  LogOut,
+  MenuIcon,
+  Settings,
+  SettingsIcon,
+  X,
+} from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: Squares2X2Icon },
-  { name: "Apps", href: "/dashboard/apps", icon: FolderOpenIcon },
-  { name: "Connect Google", href: "/dashboard/connection", icon: LinkIcon },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Apps", href: "/dashboard/apps", icon: Folder },
+  { name: "Connect Google", href: "/dashboard/connection", icon: Cable },
 ];
 
 function classNames(...classes: Array<string | false | null | undefined>) {
@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const dispatch =  useAppDispatch()
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.user);
 
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutUserMutation();
@@ -90,7 +90,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     className="-m-2.5 p-2.5"
                   >
                     <span className="sr-only">Close sidebar</span>
-                    <XMarkIcon aria-hidden="true" className="size-6 text-white" />
+                    <X aria-hidden="true" className="size-6 text-white" />
                   </button>
                 </div>
               </TransitionChild>
@@ -197,7 +197,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             height={32}
                           />
                         ) : (
-                          <UserCircleIcon className="size-6" />
+                          <CircleUserRound className="size-6" />
                         )}
                       </div>
                       <div className="w-full px-2.5 py-1">
@@ -222,7 +222,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           href="/dashboard/settings"
                           className="group flex w-full items-center gap-x-2 rounded-md px-4 py-2 text-sm/6 font-medium text-gray-700 transition hover:bg-gray-100"
                         >
-                          <Cog6ToothIcon className="size-5 shrink-0 text-gray-600 group-hover:text-gray-700" />
+                          <Settings className="size-5 shrink-0 text-gray-600 group-hover:text-gray-700" />
                           Settings
                         </Link>
                       </MenuItem>
@@ -233,7 +233,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           aria-busy={isLoggingOut}
                           className="group flex w-full items-center gap-x-2 rounded-md px-4 py-2 text-sm/6 font-semibold text-red-500 transition hover:bg-gray-100"
                         >
-                          <ArrowRightStartOnRectangleIcon
+                          <LogOut
                             aria-hidden="true"
                             className="size-5 shrink-0 text-red-500 group-hover:text-red-600"
                           />
@@ -256,7 +256,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             className="-m-2.5 p-2.5 text-gray-700 hover:text-gray-900 lg:hidden"
           >
             <span className="sr-only">Open sidebar</span>
-            <Bars3Icon aria-hidden="true" className="size-6" />
+            <MenuIcon aria-hidden="true" className="size-6" />
           </button>
           <div className="flex-1 text-sm/6 font-semibold text-gray-900">Dashboard</div>
           <Menu as="div" className="relative rounded-md px-2 py-1 hover:bg-gray-200">
@@ -272,7 +272,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     height={32}
                   />
                 ) : (
-                  <UserCircleIcon className="size-6" />
+                  <CircleUserRound className="size-6" />
                 )}
               </div>
             </MenuButton>
@@ -285,15 +285,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   href="/dashboard/settings"
                   className="group flex w-full items-center gap-x-2 rounded-md px-4 py-2 text-sm/6 font-medium text-gray-700 transition hover:bg-gray-100"
                 >
-                  <Cog6ToothIcon className="size-5 shrink-0 text-gray-600 group-hover:text-gray-700" />
+                  <SettingsIcon className="size-5 shrink-0 text-gray-600 group-hover:text-gray-700" />
                   Settings
                 </Link>
               </MenuItem>
               <MenuItem>
-                <button onClick={handleLogout}
+                <button
+                  onClick={handleLogout}
                   disabled={isLoggingOut}
-                  aria-busy={isLoggingOut} className="group flex w-full items-center gap-x-2 rounded-md px-4 py-2 text-sm/6 font-semibold text-red-500 transition hover:bg-gray-100">
-                  <ArrowRightStartOnRectangleIcon
+                  aria-busy={isLoggingOut}
+                  className="group flex w-full items-center gap-x-2 rounded-md px-4 py-2 text-sm/6 font-semibold text-red-500 transition hover:bg-gray-100"
+                >
+                  <LogOut
                     aria-hidden="true"
                     className="size-5 shrink-0 text-red-500 group-hover:text-red-600"
                   />

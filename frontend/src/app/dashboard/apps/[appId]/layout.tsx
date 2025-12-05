@@ -1,21 +1,18 @@
 "use client";
 
-import { use, useMemo, useState, useEffect, useId } from "react";
+import {
+  ArrowRight,
+  MessageCircleCode,
+  MessageCircleMore,
+  PanelsTopLeft,
+  Settings,
+  User,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import {
-  Cog6ToothIcon,
-  Squares2X2Icon,
-  ChatBubbleLeftRightIcon,
-  UserGroupIcon,
-  ChevronRightIcon,
-  InboxIcon,
-  ChatBubbleBottomCenterIcon,
-  UsersIcon,
-  ScissorsIcon,
-  HashtagIcon,
-} from "@heroicons/react/24/outline";
+import { use, useEffect, useId, useMemo, useState } from "react";
 
 function cn(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -51,59 +48,40 @@ export default function AppDetailsLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ slug: string }>;
+  params: Promise<{ appId: string }>;
 }) {
-  const { slug } = use(params);
+  const { appId } = use(params);
   const pathname = usePathname();
 
   // NOTE: first-child routes have distinct paths so parents can redirect to them
   const navigation: NavItem[] = useMemo(
     () => [
-      { name: "Overview", href: `/dashboard/apps/${slug}`, icon: Squares2X2Icon },
+      { name: "Overview", href: `/dashboard/apps/${appId}`, icon: PanelsTopLeft },
       {
         name: "Channels",
-        href: `/dashboard/apps/${slug}/channels`,
-        icon: InboxIcon,
+        href: `/dashboard/apps/${appId}/channels`,
+        icon: MessageCircleMore,
         children: [
           {
             name: "Chat Widget",
-            href: `/dashboard/apps/${slug}/channels/chat-widget`,
-            icon: ChatBubbleLeftRightIcon,
-          },
-          {
-            name: "FB Messenger",
-            href: `/dashboard/apps/${slug}/channels/fb-messenger`,
-            icon: ChatBubbleBottomCenterIcon,
+            href: `/dashboard/apps/${appId}/channels/chat-widget`,
+            icon: MessageCircleCode,
           },
         ],
       },
       {
         name: "Settings",
-        href: `/dashboard/apps/${slug}/settings`,
-        icon: Cog6ToothIcon,
-        children: [
-          {
-            name: "Shortcuts",
-            href: `/dashboard/apps/${slug}/settings/shortcuts`,
-            icon: ScissorsIcon,
-          },
-          {
-            name: "Triggers",
-            href: `/dashboard/apps/${slug}/settings/triggers`,
-            icon: HashtagIcon,
-          },
-        ],
+        href: `/dashboard/apps/${appId}/settings`,
+        icon: Settings,
       },
       {
         name: "User Management",
-        href: `/dashboard/apps/${slug}/users`,
-        icon: UserGroupIcon,
-        children: [
-          { name: "Members", href: `/dashboard/apps/${slug}/users/members`, icon: UsersIcon },
-        ],
+        href: `/dashboard/apps/${appId}/users`,
+        icon: Users,
+        children: [{ name: "Members", href: `/dashboard/apps/${appId}/users/members`, icon: User }],
       },
     ],
-    [slug]
+    [appId]
   );
 
   // title from path (segment after slug)
@@ -207,7 +185,7 @@ function SidebarItem({
               )}
             />
             <span className="flex-1">{item.name}</span>
-            <ChevronRightIcon
+            <ArrowRight
               className={cn(
                 "size-4 transition-transform duration-200",
                 open ? "rotate-90 text-gray-900" : "text-gray-500"

@@ -1,18 +1,18 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { SearchBar } from "@/components";
 import {
   Dialog,
+  DialogPanel,
+  DialogTitle,
+  Radio,
+  RadioGroup,
   Switch,
   Transition,
-  RadioGroup,
-  DialogTitle,
-  DialogPanel,
   TransitionChild,
-  Radio,
 } from "@headlessui/react";
-import { SearchBar } from "@/components";
-import { CheckIcon, XMarkIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Check, Trash, X } from "lucide-react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 const MOCK_MEMBERS = [
   {
@@ -129,7 +129,7 @@ function MemberSlideOver({
                     className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100"
                     aria-label="Close"
                   >
-                    <XMarkIcon className="h-5 w-5" />
+                    <X className="h-5 w-5" />
                   </button>
                 </div>
 
@@ -383,7 +383,7 @@ export default function Members() {
                       title="Remove"
                       aria-label={`Remove row ${idx + 1}`}
                     >
-                      <TrashIcon className="h-5 w-5" />
+                      <Trash className="h-5 w-5" />
                     </button>
                   )}
                 </div>
@@ -451,7 +451,7 @@ export default function Members() {
                   title="Delete selected"
                   aria-label="Delete selected"
                 >
-                  <TrashIcon className="h-5 w-5" />
+                  <Trash className="h-5 w-5" />
                 </button>
 
                 <button
@@ -460,7 +460,7 @@ export default function Members() {
                   title="Clear selection"
                   aria-label="Clear selection"
                 >
-                  <XMarkIcon className="h-5 w-5" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
             ) : (
@@ -528,7 +528,7 @@ export default function Members() {
                             title="Admin"
                             className="inline-flex h-5 w-5 items-center justify-center text-sm"
                           >
-                            <CheckIcon className="h-4 w-4" />
+                            <Check className="h-4 w-4" />
                           </span>
                         ) : (
                           <span className="text-gray-400">—</span>

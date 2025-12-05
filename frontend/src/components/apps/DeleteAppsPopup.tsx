@@ -1,7 +1,7 @@
 import { useDeleteAppMutation } from "@/redux/features/apps/apps.api";
 import { IQueryMutationErrorResponse } from "@/types";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
-import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { TriangleAlert, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -43,12 +43,12 @@ const DeleteAppPopup = ({ openPopup, setOpenPopup, appId }: DeleteAppPopupProps)
                 className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
               >
                 <span className="sr-only">Close</span>
-                <XMarkIcon aria-hidden="true" className="size-6" />
+                <X aria-hidden="true" className="size-6" />
               </button>
             </div>
             <div className="sm:flex sm:items-start">
               <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
-                <ExclamationTriangleIcon aria-hidden="true" className="size-6 text-red-600" />
+                <TriangleAlert aria-hidden="true" className="size-6 text-red-600" />
               </div>
               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                 <DialogTitle as="h3" className="text-base font-semibold text-gray-900">

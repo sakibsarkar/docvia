@@ -6,6 +6,9 @@ export interface IApp {
   status: AppStatus;
   userId: string;
   authorizedOrigin: string;
+  isActive?: boolean;
+  avatar?: string;
+  description?: string;
   googleDocId: string;
   createdAt: string;
   updatedAt?: string;

@@ -15,12 +15,12 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",
-    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.1",
     "@reduxjs/toolkit": "^2.8.2",
     "@types/js-cookie": "^3.0.6",
     "formik": "^2.4.6",
     "js-cookie": "^3.0.5",
+    "lucide-react": "^0.556.0",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",

@@ -1,10 +1,10 @@
 "use client";
 
-import * as yup from "yup";
-import { useState } from "react";
-import { Formik, Form } from "formik";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { FormErrorMessage, InputClass } from "@/components";
+import { Form, Formik } from "formik";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import * as yup from "yup";
 
 const passwordSchema = yup
   .string()
@@ -81,11 +81,7 @@ export default function ChangePasswordForm() {
                   tabIndex={-1}
                   aria-label={showCurrent ? "Hide password" : "Show password"}
                 >
-                  {showCurrent ? (
-                    <EyeIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  )}
+                  {showCurrent ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                 </button>
               </div>
               {touched.currentPassword && errors.currentPassword && (
@@ -116,7 +112,7 @@ export default function ChangePasswordForm() {
                   tabIndex={-1}
                   aria-label={showNew ? "Hide password" : "Show password"}
                 >
-                  {showNew ? <EyeIcon className="h-5 w-5" /> : <EyeSlashIcon className="h-5 w-5" />}
+                  {showNew ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                 </button>
               </div>
 
@@ -167,11 +163,7 @@ export default function ChangePasswordForm() {
                   tabIndex={-1}
                   aria-label={showConfirm ? "Hide password" : "Show password"}
                 >
-                  {showConfirm ? (
-                    <EyeIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  )}
+                  {showConfirm ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                 </button>
               </div>
               {touched.confirmPassword && errors.confirmPassword && (

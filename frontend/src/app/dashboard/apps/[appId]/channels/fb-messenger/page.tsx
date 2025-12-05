@@ -1,11 +1,10 @@
-import { PlusIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import { Plus } from "lucide-react";
 
 const FBMessenger = () => {
   return (
     <section className="rounded-md border border-gray-200 bg-white p-5 md:p-6">
       <button className="flex items-center gap-1.5 rounded border border-emerald-600 px-4 py-1.5 text-[14px] text-emerald-600 hover:bg-emerald-50">
-        <PlusIcon className="h-4 w-4 text-emerald-800" /> Connect{" "}
+        <Plus className="h-4 w-4 text-emerald-800" /> Connect{" "}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"

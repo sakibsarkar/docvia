@@ -1,14 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import {
-  EllipsisVerticalIcon,
-  DocumentDuplicateIcon,
-  ArchiveBoxIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
 import { IApp } from "@/types";
+import { Archive, BookCopy, EllipsisVertical } from "lucide-react";
+
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 export default function ProjectCard({ app }: { app: IApp }) {
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -41,7 +37,7 @@ export default function ProjectCard({ app }: { app: IApp }) {
           aria-label="Open context menu"
           className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-white hover:text-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
-          <EllipsisVerticalIcon className="h-5 w-5" />
+          <EllipsisVertical className="h-5 w-5" />
         </button>
       </div>
 
@@ -56,14 +52,14 @@ export default function ProjectCard({ app }: { app: IApp }) {
               type="button"
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-gray-800 hover:bg-gray-50"
             >
-              <DocumentDuplicateIcon className="h-4 w-4 text-gray-500" />
+              <BookCopy className="h-4 w-4 text-gray-500" />
               <span>Duplicate App</span>
             </button>
             <button
               type="button"
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-gray-800 hover:bg-gray-50"
             >
-              <ArchiveBoxIcon className="h-4 w-4 text-gray-500" />
+              <Archive className="h-4 w-4 text-gray-500" />
               <span>Move to Archive</span>
             </button>
           </div>

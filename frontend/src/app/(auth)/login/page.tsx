@@ -1,18 +1,18 @@
 "use client";
 
-import * as yup from "yup";
+import { FormErrorMessage } from "@/components";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useLoginUserMutation } from "@/redux/features/user/user.api";
+import { setUser, updateUser } from "@/redux/features/user/user.slice";
+import { IQueryMutationErrorResponse } from "@/types/queryMutationErrorResponse";
+import { Form, Formik } from "formik";
+import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Formik, Form } from "formik";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { FormErrorMessage } from "@/components";
-import { IQueryMutationErrorResponse } from "@/types/queryMutationErrorResponse";
+import { useState } from "react";
 import { toast } from "sonner";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { setToken, setUser, updateUser } from "@/redux/features/user/user.slice";
-import { useLoginUserMutation } from "@/redux/features/user/user.api";
+import * as yup from "yup";
 
 const schema = yup.object({
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -48,7 +48,7 @@ export default function Login() {
     }
 
     dispatch(setUser(data?.result || null));
-    router.push("/dashboard")
+    router.push("/dashboard");
 
     toast.success("Login successful");
   };
@@ -140,11 +140,7 @@ export default function Login() {
                       tabIndex={-1}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showPassword ? (
-                        <EyeIcon className="h-5 w-5" />
-                      ) : (
-                        <EyeSlashIcon className="h-5 w-5" />
-                      )}
+                      {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                     </button>
                   </div>
                   {showPasswordError && <FormErrorMessage message={errors.password as string} />}

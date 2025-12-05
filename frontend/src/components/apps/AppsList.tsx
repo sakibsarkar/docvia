@@ -1,7 +1,7 @@
 // components/AppsList.tsx
 import { AppCard } from "@/components";
 import { useGetAppsQuery } from "@/redux/features/apps/apps.api";
-import { InboxIcon } from "@heroicons/react/24/outline";
+import { InboxIcon } from "lucide-react";
 import { ComponentType, SVGProps } from "react";
 
 type EmptyStateProps = {

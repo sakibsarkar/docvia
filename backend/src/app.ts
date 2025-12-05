@@ -4,6 +4,7 @@ import express, { Application, Request, Response } from "express";
 import path from "path";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
+import clientAppUtils from "./app/modules/clientApp/clientApp.utils";
 import subscriptionWebhook from "./app/modules/subscription/subscription.webhook";
 import router from "./app/routes";
 import sendResponse from "./app/utils/send.response";
@@ -16,6 +17,7 @@ app.post(
   subscriptionWebhook.subscriptionComplete
 );
 
+console.log(clientAppUtils.generateAppApiKey());
 app.use("/assets", express.static(path.join(process.cwd(), "public")));
 // parsers
 app.use(cookieParser());

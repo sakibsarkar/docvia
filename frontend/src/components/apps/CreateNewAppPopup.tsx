@@ -1,5 +1,5 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 import CreateAppForm from "./CreateAppForm";
 
 interface CreateNewAppPopupProps {
@@ -28,7 +28,7 @@ const CreateNewAppPopup = ({ openPopup, setOpenPopup }: CreateNewAppPopupProps) 
                 className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
               >
                 <span className="sr-only">Close</span>
-                <XMarkIcon aria-hidden="true" className="size-6" />
+                <X aria-hidden="true" className="size-6" />
               </button>
             </div>
             <CreateAppForm setOpenPopup={setOpenPopup} />
