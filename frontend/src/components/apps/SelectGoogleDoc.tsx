@@ -21,7 +21,13 @@ const SkeletonRow = () => (
   </div>
 );
 
-const SelectGoogleDoc = ({ onDocSelect }: { onDocSelect: (doc: IGoogleDoc) => void }) => {
+const SelectGoogleDoc = ({
+  onDocSelect,
+  defaultDocId,
+}: {
+  onDocSelect: (doc: IGoogleDoc) => void;
+  defaultDocId?: string;
+}) => {
   const [query, setQuery] = useState<Record<string, string | number | undefined>>({});
   const [searchTerm, setSearchTerm] = useDebounce("");
   const [docFiles, setDocFiles] = useState<IGoogleDoc[]>([]);
@@ -31,6 +37,12 @@ const SelectGoogleDoc = ({ onDocSelect }: { onDocSelect: (doc: IGoogleDoc) => vo
 
   useEffect(() => {
     const files = data?.data?.files;
+    if (!selectedFile) {
+      const currentSelectedFile = files?.find((file) => file.id === defaultDocId);
+      if (currentSelectedFile) {
+        setSelectedFile(currentSelectedFile);
+      }
+    }
 
     if (files) {
       setDocFiles((prev) => [...prev, ...files]);

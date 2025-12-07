@@ -20,6 +20,7 @@ const schemaStepWebsite = yup.object({
       "Enter a valid root URL (e.g., https://example.com or http://localhost:3000)"
     ),
   selectedDocId: yup.string().required("Please select a Google Doc"),
+  docName: yup.string().required("Please select a Google Doc"),
 });
 
 const steps = [
@@ -37,6 +38,7 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
     appName: "",
     websiteUrl: "",
     selectedDocId: "",
+    docName: "",
   };
 
   const handleSubmit = async (values: typeof initialValues) => {
@@ -44,6 +46,7 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
       appName: values.appName,
       authorizedOrigin: values.websiteUrl,
       googleDocId: values.selectedDocId,
+      googleDocName: values.docName,
     });
     const error = res.error as IQueryMutationErrorResponse;
 
@@ -167,7 +170,12 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
 
                 {/* STEP 3: REQUIRED — Select a Google Doc */}
                 {step === 2 && (
-                  <SelectGoogleDoc onDocSelect={(doc) => setFieldValue("selectedDocId", doc.id)} />
+                  <SelectGoogleDoc
+                    onDocSelect={(doc) => {
+                      setFieldValue("selectedDocId", doc.id);
+                      setFieldValue("docName", doc.name);
+                    }}
+                  />
                 )}
 
                 {/* Nav buttons */}

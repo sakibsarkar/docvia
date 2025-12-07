@@ -1,11 +1,19 @@
 "use client";
 import ConnectedDoc from "@/components/apps/appSettings/ConnectedDoc";
-const AppSettingsView = () => {
+import { useGetAppByIdQuery } from "@/redux/features/apps/apps.api";
+import { notFound } from "next/navigation";
+const AppSettingsView = ({ appId }: { appId: string }) => {
+  const { data, isLoading } = useGetAppByIdQuery(appId);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (!data?.data) {
+    notFound();
+  }
   return (
     <div className="min-h-screen p-6">
       <div className="mx-auto w-full">
         {/* Google Doc Settings Card */}
-        <ConnectedDoc />
+        <ConnectedDoc app={data?.data} />
 
         {/* Additional Settings Section */}
         <div className="rounded-lg border border-slate-200 bg-white p-6">

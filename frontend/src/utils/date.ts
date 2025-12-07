@@ -6,5 +6,19 @@ const formatSecondsToMMSS = (secs: number) => {
   return `${pad(m)}:${pad(s)}`;
 };
 
-const dateUtils = { formatSecondsToMMSS };
+function formatToMMMdddYYYY(input: string | number | Date): string {
+  const date = new Date(input);
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date value");
+  }
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+}
+
+const dateUtils = { formatSecondsToMMSS, formatToMMMdddYYYY };
 export default dateUtils;

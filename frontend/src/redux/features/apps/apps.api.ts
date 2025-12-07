@@ -43,7 +43,7 @@ const appsApi = api.injectEndpoints({
     }),
     createApp: builder.mutation<
       { data: IApp },
-      Pick<IApp, "appName" | "authorizedOrigin" | "googleDocId">
+      Pick<IApp, "appName" | "authorizedOrigin" | "googleDocId" | "googleDocName">
     >({
       query: (app) => ({
         url: "/app/create",
@@ -79,5 +79,5 @@ export const {
   useDeleteAppMutation,
   useUpdateAppByAppIdMutation,
   useGetAppSecretKeyByAppIdQuery,
-  useLazyGetAppSecretKeyByAppIdQuery
+  useLazyGetAppSecretKeyByAppIdQuery,
 } = appsApi;

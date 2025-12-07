@@ -10,6 +10,7 @@ export interface IApp {
   avatar?: string;
   description?: string;
   googleDocId: string;
+  googleDocName: string;
   createdAt: string;
   updatedAt?: string;
 }
