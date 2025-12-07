@@ -1,5 +1,6 @@
-import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { X } from "lucide-react";
+"use client";
+
+import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
 import CreateAppForm from "./CreateAppForm";
 
 interface CreateNewAppPopupProps {
@@ -9,32 +10,13 @@ interface CreateNewAppPopupProps {
 
 const CreateNewAppPopup = ({ openPopup, setOpenPopup }: CreateNewAppPopupProps) => {
   return (
-    <Dialog open={openPopup} onClose={setOpenPopup} className="relative z-50">
-      <DialogBackdrop
-        transition
-        className="fixed inset-0 z-50 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
-      />
-
-      <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <DialogPanel
-            transition
-            className="relative max-w-[700px] transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
-          >
-            <div className="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
-              <button
-                type="button"
-                onClick={() => setOpenPopup(false)}
-                className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
-              >
-                <span className="sr-only">Close</span>
-                <X aria-hidden="true" className="size-6" />
-              </button>
-            </div>
-            <CreateAppForm setOpenPopup={setOpenPopup} />
-          </DialogPanel>
-        </div>
-      </div>
+    <Dialog open={openPopup} onOpenChange={setOpenPopup}>
+      <DialogContent className="max-w-[700px]">
+        <DialogClose className="absolute top-0 right-0 rounded-md bg-white p-4 text-gray-400 hover:text-gray-500">
+          <span className="sr-only">Close</span>
+        </DialogClose>
+        <CreateAppForm setOpenPopup={setOpenPopup} />
+      </DialogContent>
     </Dialog>
   );
 };

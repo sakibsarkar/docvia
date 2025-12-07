@@ -1,18 +1,11 @@
 "use client";
 
 import { SearchBar } from "@/components";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  Radio,
-  RadioGroup,
-  Switch,
-  Transition,
-  TransitionChild,
-} from "@headlessui/react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
 import { Check, Trash, X } from "lucide-react";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const MOCK_MEMBERS = [
   {
@@ -81,139 +74,85 @@ function MemberSlideOver({
   }, [member]);
 
   return (
-    <Transition show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <TransitionChild
-          as={Fragment}
-          enter="ease-out duration-200"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-150"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/30" />
-        </TransitionChild>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="w-screen max-w-md">
+        <div className="flex items-center justify-between border-b pb-4">
+          <div className="flex items-center gap-3">
+            <Avatar name={member?.name ?? ""} />
+            <div>
+              <DialogTitle className="text-base font-semibold text-gray-900">
+                {member?.name}
+              </DialogTitle>
+              <p className="text-xs text-gray-500">
+                Last Known Location:{" "}
+                <span className="inline-flex items-center gap-1">
+                  <span className="h-2.5 w-2.5 rounded-sm bg-green-500" />
+                  {member?.location}
+                </span>
+              </p>
+            </div>
+          </div>
 
-        <div className="fixed inset-0 overflow-hidden">
-          <div className="absolute inset-0 flex max-w-full justify-end">
-            <TransitionChild
-              as={Fragment}
-              enter="transform transition ease-out duration-300"
-              enterFrom="translate-x-full"
-              enterTo="translate-x-0"
-              leave="transform transition ease-in duration-200"
-              leaveFrom="translate-x-0"
-              leaveTo="translate-x-full"
+          <button
+            onClick={onClose}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="space-y-6 py-5">
+          <div>
+            <p className="mb-3 text-sm font-medium text-gray-700">Role</p>
+            <RadioGroup
+              value={role}
+              onValueChange={(role) => setRole(role as "Admin" | "Agent")}
+              className="flex gap-6"
             >
-              <DialogPanel className="w-screen max-w-md bg-white shadow-xl">
-                <div className="flex items-center justify-between px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar name={member?.name ?? ""} />
-                    <div>
-                      <DialogTitle className="text-base font-semibold text-gray-900">
-                        {member?.name}
-                      </DialogTitle>
-                      <p className="text-xs text-gray-500">
-                        Last Known Location:{" "}
-                        <span className="inline-flex items-center gap-1">
-                          <span className="h-2.5 w-2.5 rounded-sm bg-green-500" />
-                          {member?.location}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="Admin" id="role-admin" />
+                <label
+                  htmlFor="role-admin"
+                  className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-3 py-1.5 text-sm text-gray-700 has-[:checked]:border-emerald-500 has-[:checked]:text-emerald-600"
+                >
+                  Admin
+                </label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="Agent" id="role-agent" />
+                <label
+                  htmlFor="role-agent"
+                  className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-3 py-1.5 text-sm text-gray-700 has-[:checked]:border-emerald-500 has-[:checked]:text-emerald-600"
+                >
+                  Agent
+                </label>
+              </div>
+            </RadioGroup>
+          </div>
 
-                  <button
-                    onClick={onClose}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100"
-                    aria-label="Close"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <div className="space-y-6 px-6 py-5">
-                  <div>
-                    <p className="mb-2 text-sm font-medium text-gray-700">Role</p>
-                    <RadioGroup value={role} onChange={setRole} className="flex gap-6">
-                      <Radio value="Admin" as={Fragment}>
-                        {({ checked }) => (
-                          <button
-                            className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm ${
-                              checked
-                                ? "border-emerald-500 text-emerald-600"
-                                : "border-gray-200 text-gray-700"
-                            }`}
-                          >
-                            <span
-                              className={`h-2.5 w-2.5 rounded-full border ${
-                                checked ? "border-emerald-500 bg-emerald-500" : "border-gray-300"
-                              }`}
-                            />
-                            Admin
-                          </button>
-                        )}
-                      </Radio>
-                      <Radio value="Agent" as={Fragment}>
-                        {({ checked }) => (
-                          <button
-                            className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm ${
-                              checked
-                                ? "border-emerald-500 text-emerald-600"
-                                : "border-gray-200 text-gray-700"
-                            }`}
-                          >
-                            <span
-                              className={`h-2.5 w-2.5 rounded-full border ${
-                                checked ? "border-emerald-500 bg-emerald-500" : "border-gray-300"
-                              }`}
-                            />
-                            Agent
-                          </button>
-                        )}
-                      </Radio>
-                    </RadioGroup>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Agent Status</span>
-                    <Switch
-                      checked={active}
-                      onChange={setActive}
-                      className={`${
-                        active ? "bg-emerald-500" : "bg-gray-200"
-                      } relative inline-flex h-6 w-11 items-center rounded-full transition`}
-                    >
-                      <span
-                        className={`${
-                          active ? "translate-x-6" : "translate-x-1"
-                        } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-                      />
-                    </Switch>
-                  </div>
-                </div>
-
-                <div className="mt-2 flex items-center justify-end gap-3 px-6 py-4">
-                  <button
-                    onClick={() => member && onDelete(member.id)}
-                    className="rounded-md bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => member && onSave({ ...member, role, active })}
-                    className="rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
-                  >
-                    Save
-                  </button>
-                </div>
-              </DialogPanel>
-            </TransitionChild>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Agent Status</span>
+            <Switch checked={active} onCheckedChange={setActive} />
           </div>
         </div>
-      </Dialog>
-    </Transition>
+
+        <div className="flex items-center justify-end gap-3 border-t pt-4">
+          <button
+            onClick={() => member && onDelete(member.id)}
+            className="rounded-md bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => member && onSave({ ...member, role, active })}
+            className="rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+          >
+            Save
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -276,7 +215,6 @@ export default function Members() {
   };
 
   const clearSelection = () => {
-    // quick deselect all (clear across all rows)
     setSelected({});
   };
 
@@ -306,7 +244,6 @@ export default function Members() {
     });
   };
 
-  // Row helpers
   const addInviteRow = () =>
     setInviteRows((rows) => [...rows, { id: crypto.randomUUID(), email: "", role: "Admin" }]);
 
@@ -320,6 +257,14 @@ export default function Members() {
 
   return (
     <section>
+      <MemberSlideOver
+        open={openSlide}
+        onClose={() => setOpenSlide(false)}
+        member={activeMember}
+        onSave={saveMember}
+        onDelete={deleteMember}
+      />
+
       {showInviteModal ? (
         <div className="rounded-md border border-gray-200 bg-white p-4">
           <h3 className="mb-4 text-sm font-normal text-gray-500">
@@ -327,17 +272,14 @@ export default function Members() {
           </h3>
 
           <div className="">
-            {/* Header */}
             <div className="mb-3 grid grid-cols-12 items-center gap-6 bg-gray-50 px-2 py-3 text-xs font-medium text-gray-500">
               <div className="col-span-6">Email</div>
               <div className="col-span-5">Role</div>
               <div className="col-span-1" />
             </div>
 
-            {/* Rows */}
             {inviteRows.map((row, idx) => (
               <div key={row.id} className="grid grid-cols-12 items-center gap-6 rounded-md p-3">
-                {/* Email */}
                 <div className="col-span-6">
                   <input
                     type="email"
@@ -347,7 +289,6 @@ export default function Members() {
                   />
                 </div>
 
-                {/* Role */}
                 <div className="col-span-5">
                   <div className="flex items-center gap-6">
                     <label className="inline-flex cursor-pointer items-center gap-2 text-sm">
@@ -373,7 +314,6 @@ export default function Members() {
                   </div>
                 </div>
 
-                {/* Delete (hidden when only one row remains) */}
                 <div className="col-span-1 flex justify-end">
                   {canDelete && (
                     <button
@@ -390,7 +330,6 @@ export default function Members() {
               </div>
             ))}
 
-            {/* Add Another */}
             <div className="flex justify-end">
               <button
                 type="button"
@@ -402,7 +341,6 @@ export default function Members() {
             </div>
           </div>
 
-          {/* Actions */}
           <div className="mt-6 flex items-center gap-3">
             <button
               onClick={() => {
@@ -436,7 +374,6 @@ export default function Members() {
               widthClassName="w-[340px]"
             />
 
-            {/* Right controls area: selection toolbar OR Invite button */}
             {anySelected ? (
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-700">
@@ -531,20 +468,14 @@ export default function Members() {
                             <Check className="h-4 w-4" />
                           </span>
                         ) : (
-                          <span className="text-gray-400">—</span>
+                          <span className="text-xs text-gray-400">—</span>
                         )}
                       </td>
 
                       <td className="px-4 py-3">
-                        {m.active ? (
-                          <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-                            Inactive
-                          </span>
-                        )}
+                        <span
+                          className={`inline-flex h-2 w-2 rounded-full ${m.active ? "bg-green-500" : "bg-gray-300"}`}
+                        />
                       </td>
                     </tr>
                   );
@@ -554,15 +485,6 @@ export default function Members() {
           </div>
         </div>
       )}
-
-      {/* Slide-over */}
-      <MemberSlideOver
-        open={openSlide}
-        onClose={() => setOpenSlide(false)}
-        member={activeMember}
-        onSave={saveMember}
-        onDelete={deleteMember}
-      />
     </section>
   );
 }

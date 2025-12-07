@@ -79,7 +79,7 @@ export default function Register() {
       return;
     }
 
-    const registeredEmail = res?.data?.data?.email || values.email;
+    const registeredEmail = values.email;
     Cookies.set("verification_email", registeredEmail, { sameSite: "lax" });
     router.replace("/register/verification");
   };

@@ -4,17 +4,18 @@ import { IGoogleDoc } from "@/types";
 import { Check, FileMinusCorner } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Skeleton from "../ui/Skeleton";
 // helper (optional)
 const SkeletonRow = () => (
   <div className="flex items-start gap-3 border-b border-gray-200 bg-white p-3">
     {/* radio circle */}
-    <span className="aspect-square w-[20px] rounded-full border border-gray-200" />
+    <Skeleton className="aspect-square w-[20px] rounded-full border border-gray-200" />
     {/* doc icon + text */}
     <div className="flex items-start gap-[10px]">
       <Image width={20} height={20} src={"/images/google/docs.png"} alt="" />
       <div className="min-w-0">
-        <div className="h-4 w-48 rounded bg-gray-200" />
-        <div className="mt-2 h-3 w-36 rounded bg-gray-100" />
+        <Skeleton className="h-4 w-48 rounded bg-gray-200" />
+        <Skeleton className="mt-2 h-3 w-36 rounded bg-gray-100" />
       </div>
     </div>
   </div>

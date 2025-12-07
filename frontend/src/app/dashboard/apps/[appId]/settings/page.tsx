@@ -1,6 +1,8 @@
-import { redirect } from "next/navigation";
+import AppSettingsView from "@/views/apps/AppSettingsView";
 
-export default async function Page({ params }: { params: Promise<{ appId: string }> }) {
+const page = async ({ params }: { params: Promise<{ appId: string }> }) => {
   const { appId } = await params;
-  redirect(`/dashboard/apps/${appId}/settings/shortcuts`);
-}
+  return <AppSettingsView />;
+};
+
+export default page;
