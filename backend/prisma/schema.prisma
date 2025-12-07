@@ -66,6 +66,7 @@ model App {
   authorizedOrigin String
   apiKeyHash       String   @unique
   googleDocId      String   @default("")
+  googleDocName    String   @default("")
   userId           String
   isActive         Boolean  @default(false)
   description      String?  @default("")

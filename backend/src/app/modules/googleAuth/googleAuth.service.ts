@@ -42,6 +42,34 @@ const myGoogleConnection = async (userId: string) => {
     isExpired = new Date(row.expiry_date) < new Date();
   }
 
+  if (isExpired && row.refreshToken) {
+    try {
+      const oauth2 = googleAuthUtils.makeOAuthClient();
+      oauth2.setCredentials({
+        access_token: row.accessToken || undefined,
+        refresh_token: row.refreshToken || undefined,
+        scope: row.scope || undefined,
+        token_type: row.tokenType || undefined,
+        expiry_date: row.expiry_date ? new Date(row.expiry_date).getTime() : undefined,
+      });
+      const { token } = await oauth2.getAccessToken();
+      console.log({ prev: row.accessToken, new: token });
+
+      const refreshed = await prisma.googleAuthToken.update({
+        where: { userId: userId },
+        data: { accessToken: token },
+      });
+      if (refreshed) {
+        Object.assign(row, { accessToken: token });
+        isExpired = false;
+      }
+    } catch {
+      // ignore refresh errors
+    }
+  }
+
+  console.log(row.accessToken);
+
   const isAccessTokenValid =
     row.accessToken && !isExpired
       ? await googleAuthUtils.validateGoogleToken(row.accessToken)
@@ -57,29 +85,6 @@ const myGoogleConnection = async (userId: string) => {
       picture: row.picture,
     };
   }
-
-  if ((!isAccessTokenValid || isExpired) && row.refreshToken) {
-    try {
-      const oauth2 = googleAuthUtils.makeOAuthClient();
-      oauth2.setCredentials({
-        access_token: row.accessToken || undefined,
-        refresh_token: row.refreshToken || undefined,
-        scope: row.scope || undefined,
-        token_type: row.tokenType || undefined,
-        expiry_date: row.expiry_date ? new Date(row.expiry_date).getTime() : undefined,
-      });
-      await oauth2.getAccessToken();
-      const refreshed = await prisma.googleAuthToken.findUnique({
-        where: { userId: userId },
-      });
-      if (refreshed) {
-        Object.assign(row, refreshed);
-      }
-    } catch {
-      // ignore refresh errors
-    }
-  }
-
   const grantedScopes = row.scope || "";
   const hasRequiredScopes = googleAuthUtils.areScopesSatisfied(grantedScopes);
 
