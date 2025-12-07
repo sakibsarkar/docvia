@@ -35,6 +35,7 @@ const create = z
     authorizedOrigin: originUrl,
     isActive: z.boolean().optional(),
     googleDocId: z.string().min(1, "Google Doc ID is required"),
+    googleDocName: z.string().min(1, "Google Doc Name is required"),
     description: z.string().max(200, "Description can't be longer than 200 characters").optional(),
   })
   .strict();
