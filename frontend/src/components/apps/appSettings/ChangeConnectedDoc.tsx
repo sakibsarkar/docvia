@@ -19,7 +19,13 @@ const ChangeConnectedDoc = ({ currentDocId, appId }: { currentDocId?: string; ap
   const [updateApp, { isLoading }] = useUpdateAppByAppIdMutation();
 
   const handleConfirm = async () => {
-    if (!selectedDocFile || isLoading || currentDocId === selectedDocFile.id) {
+    if (!selectedDocFile || isLoading) {
+      return;
+    }
+
+    console.log(currentDocId, selectedDocFile.id);
+
+    if (currentDocId === selectedDocFile.id) {
       setIsConfirmationOpen(false);
       setIsOpen(false);
       setSelectedDocFile(undefined);
@@ -73,8 +79,15 @@ const ChangeConnectedDoc = ({ currentDocId, appId }: { currentDocId?: string; ap
             <button
               onClick={() => {
                 if (selectedDocFile) {
+                  if (currentDocId === selectedDocFile?.id) {
+                    setIsConfirmationOpen(false);
+                    setIsOpen(false);
+                    setSelectedDocFile(undefined);
+                    return;
+                  }
                   setIsConfirmationOpen(true);
                 }
+
                 setIsOpen(false);
               }}
               type="button"

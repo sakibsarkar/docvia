@@ -1,6 +1,6 @@
 // components/AppsList.tsx
 import { AppCard } from "@/components";
-import { useGetAppsQuery } from "@/redux/features/apps/apps.api";
+import { IApp } from "@/types";
 import { InboxIcon } from "lucide-react";
 import { ComponentType, SVGProps } from "react";
 
@@ -18,7 +18,12 @@ const EmptyState = ({ Icon = InboxIcon, after, before, highlightText }: EmptySta
       <h2 className="text-lg font-semibold text-gray-900">{""}</h2>
       <p className="mt-2 max-w-md text-sm text-gray-400">
         {before}
-        <span className="rounded px-1 font-semibold text-gray-700">{highlightText}</span>
+
+        {highlightText ? (
+          <span className="rounded px-1 font-semibold text-gray-700">{highlightText}</span>
+        ) : (
+          " "
+        )}
         {after}
       </p>
     </div>
@@ -26,14 +31,13 @@ const EmptyState = ({ Icon = InboxIcon, after, before, highlightText }: EmptySta
 };
 
 export type AppsListProps = {
-  status?: "all" | "development" | "production" | "archive";
   EmptyIcon?: ComponentType<SVGProps<SVGSVGElement>>;
+  apps: IApp[];
+  isFetching: boolean;
+  status: string;
 };
 
-const AppsList = ({ status = "all", EmptyIcon }: AppsListProps) => {
-  const { data, isFetching } = useGetAppsQuery({ status });
-  const apps = data?.data || [];
-
+const AppsList = ({ apps = [], EmptyIcon, isFetching, status }: AppsListProps) => {
   return (
     <>
       {apps.length ? (

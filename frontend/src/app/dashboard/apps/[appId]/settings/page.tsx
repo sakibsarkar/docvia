@@ -1,4 +1,4 @@
-import AppSettingsView from "@/views/apps/AppSettingsView";
+import AppSettingsView from "@/views/dashboard/apps/AppSettingsView";
 
 const page = async ({ params }: { params: Promise<{ appId: string }> }) => {
   const { appId } = await params;

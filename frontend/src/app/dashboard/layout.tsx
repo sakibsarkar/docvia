@@ -19,8 +19,10 @@ import { logout as logoutAction } from "@/redux/features/user/user.slice";
 import type { IQueryMutationErrorResponse } from "@/types";
 import {
   Cable,
+  ChevronDown,
   CircleUserRound,
   Folder,
+  IdCard,
   LayoutDashboard,
   LogOut,
   MenuIcon,
@@ -31,9 +33,25 @@ import {
 import Image from "next/image";
 import { toast } from "sonner";
 
-const navigation = [
+interface INavigation {
+  name: string;
+  href: string;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  children?: INavigation[];
+}
+
+const navigation: INavigation[] = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Apps", href: "/dashboard/apps", icon: Folder },
+  {
+    name: "Settings",
+    href: "",
+    icon: Settings,
+    children: [
+      { name: "Profile", href: "/dashboard/settings", icon: CircleUserRound },
+      { name: "Subscription", href: "/dashboard/settings/plan", icon: IdCard },
+    ],
+  },
   { name: "Connect Google", href: "/dashboard/connection", icon: Cable },
 ];
 
@@ -41,14 +59,126 @@ function classNames(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
+function NavigationItems({
+  items,
+  pathname,
+  expandedItems,
+  onToggleExpand,
+  onLinkClick,
+  isNested = false,
+}: {
+  items: INavigation[];
+  pathname: string;
+  expandedItems: Set<string>;
+  onToggleExpand: (name: string) => void;
+  onLinkClick?: () => void;
+  isNested?: boolean;
+}) {
+  const getClassName = (active: boolean) => {
+    return classNames(
+      active ? "bg-gray-200" : "",
+      "flex flex-1 items-center gap-x-3 rounded-md px-3 py-2 font-poppins text-sm/6 font-normal text-gray-950 hover:bg-gray-200"
+    );
+  };
+  return (
+    <ul
+      role="list"
+      className={isNested ? "ml-4 space-y-1 border-l border-gray-200 pl-2" : "-mx-2 space-y-1"}
+    >
+      {items.map((item) => {
+        const active = item.href === pathname;
+        const isExpanded = expandedItems.has(item.name);
+        const hasChildren = item.children && item.children.length > 0;
+
+        return (
+          <li key={item.name}>
+            <div className="flex items-center">
+              {hasChildren ? (
+                <button
+                  onClick={() => {
+                    onToggleExpand(item.name);
+                    onLinkClick?.();
+                  }}
+                  className={`${getClassName(active)} justify-between`}
+                >
+                  <span className="flex items-center justify-start gap-[4px]">
+                    {item.icon && (
+                      <item.icon
+                        className={classNames(
+                          active ? "text-indigo-600" : "text-gray-400",
+                          "h-6 w-6 shrink-0"
+                        )}
+                        aria-hidden="true"
+                      />
+                    )}
+                    {item.name}
+                  </span>
+
+                  <span
+                    className="mr-2 rounded p-1 hover:bg-gray-200"
+                    aria-label={`Toggle ${item.name} submenu`}
+                  >
+                    <ChevronDown
+                      className={classNames(
+                        "h-4 w-4 transition-transform",
+                        isExpanded ? "rotate-180" : ""
+                      )}
+                    />
+                  </span>
+                </button>
+              ) : (
+                <Link href={item.href} className={getClassName(active)} onClick={onLinkClick}>
+                  {item.icon && (
+                    <item.icon
+                      className={classNames(
+                        active ? "text-indigo-600" : "text-gray-400",
+                        "h-6 w-6 shrink-0"
+                      )}
+                      aria-hidden="true"
+                    />
+                  )}
+                  {item.name}
+                </Link>
+              )}
+            </div>
+            {hasChildren && isExpanded && (
+              <NavigationItems
+                items={item.children!}
+                pathname={pathname}
+                expandedItems={expandedItems}
+                onToggleExpand={onToggleExpand}
+                onLinkClick={onLinkClick}
+                isNested={true}
+              />
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.user);
 
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutUserMutation();
+
+  const handleToggleExpand = useCallback((itemName: string) => {
+    setExpandedItems((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemName)) {
+        newSet.delete(itemName);
+      } else {
+        newSet.add(itemName);
+      }
+      return newSet;
+    });
+  }, []);
 
   const handleLogout = useCallback(async () => {
     const res = await logoutMutation(undefined);
@@ -98,32 +228,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <nav className="relative flex flex-1 flex-col">
                 <ul role="list" className="flex flex-1 flex-col gap-y-7">
                   <li>
-                    <ul role="list" className="-mx-2 space-y-1">
-                      {navigation.map((item) => {
-                        const active = item.href === pathname;
-                        return (
-                          <li key={item.name}>
-                            <Link
-                              href={item.href}
-                              className={classNames(
-                                active ? "bg-gray-200" : "",
-                                "group flex items-center gap-x-3 rounded-md px-3 py-2 font-poppins text-sm/6 font-normal text-gray-950 hover:bg-gray-200"
-                              )}
-                              onClick={() => setSidebarOpen(false)}
-                            >
-                              <item.icon
-                                aria-hidden="true"
-                                className={classNames(
-                                  active ? "text-gray-950" : "text-gray-600",
-                                  "size-4.5 shrink-0"
-                                )}
-                              />
-                              {item.name}
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                    <NavigationItems
+                      items={navigation}
+                      pathname={pathname}
+                      expandedItems={expandedItems}
+                      onToggleExpand={handleToggleExpand}
+                      onLinkClick={() => setSidebarOpen(false)}
+                    />
                   </li>
                 </ul>
               </nav>
@@ -145,31 +256,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
-                  <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => {
-                      const active = item.href === pathname;
-                      return (
-                        <li key={item.name}>
-                          <Link
-                            href={item.href}
-                            className={classNames(
-                              active ? "bg-gray-200" : "",
-                              "group flex items-center gap-x-3 rounded-md px-3 py-2 font-poppins text-sm/6 font-normal text-gray-950 hover:bg-gray-200"
-                            )}
-                          >
-                            <item.icon
-                              aria-hidden="true"
-                              className={classNames(
-                                active ? "text-gray-950" : "text-gray-600",
-                                "size-4.5 shrink-0"
-                              )}
-                            />
-                            {item.name}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                  <NavigationItems
+                    items={navigation}
+                    pathname={pathname}
+                    expandedItems={expandedItems}
+                    onToggleExpand={handleToggleExpand}
+                  />
                 </li>
 
                 <li className="relative -mx-6 mt-auto border-t border-gray-200 px-4 py-3">

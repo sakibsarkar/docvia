@@ -1,11 +1,12 @@
 "use client";
+import AppSettingsViewSkeleton from "@/components/apps/appSettings/AppSettingsViewSkeleton";
 import ConnectedDoc from "@/components/apps/appSettings/ConnectedDoc";
 import { useGetAppByIdQuery } from "@/redux/features/apps/apps.api";
 import { notFound } from "next/navigation";
 const AppSettingsView = ({ appId }: { appId: string }) => {
   const { data, isLoading } = useGetAppByIdQuery(appId);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <AppSettingsViewSkeleton />;
   if (!data?.data) {
     notFound();
   }

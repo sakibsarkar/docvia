@@ -1,5 +1,7 @@
 "use client";
 import { DeleteAppPopup, FormErrorMessage } from "@/components";
+import AppOverviewSkeleton from "@/components/apps/appOverview/AppOverviewSkeleton";
+import AppSecret from "@/components/apps/appOverview/AppSecret";
 import { useGetAppByIdQuery, useUpdateAppByAppIdMutation } from "@/redux/features/apps/apps.api";
 import { IApp, IQueryMutationErrorResponse } from "@/types";
 import { Field, Form, Formik, FormikHelpers } from "formik";
@@ -9,8 +11,6 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as yup from "yup";
-import AppOverviewSkeleton from "./AppOverviewSkeleton";
-import AppSecret from "./AppSecret";
 
 const ACCEPTED_TYPES: string[] = ["image/jpeg", "image/png"] as const;
 const MAX_BYTES = 5_00_000; // 0.5MB
@@ -31,7 +31,7 @@ const schema = yup.object({
   description: yup.string().max(200, "Description can't be longer than 200 characters").optional(),
 });
 
-const AppOverview = () => {
+const AppOverviewView = () => {
   const params = useParams<{ appId?: string }>();
   const appId = params?.appId as string;
 
@@ -316,4 +316,4 @@ const AppOverview = () => {
   );
 };
 
-export default AppOverview;
+export default AppOverviewView;

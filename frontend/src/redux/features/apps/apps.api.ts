@@ -1,10 +1,13 @@
 import { api } from "@/redux/api/api";
-import { IApp } from "@/types";
+import { IApp, IMeta } from "@/types";
 import { generateQueryParams } from "@/utils/params";
 
 const appsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getApps: builder.query<{ data: IApp[] }, Record<string, string | number | undefined>>({
+    getApps: builder.query<
+      { data: IApp[]; meta: IMeta },
+      Record<string, string | number | undefined>
+    >({
       query: (query) => {
         const queryStr = generateQueryParams(query);
         return {
@@ -17,7 +20,7 @@ const appsApi = api.injectEndpoints({
     getAppCount: builder.query<{ data: { count: number } }, undefined>({
       query: () => {
         return {
-          url: `/get/a/count`,
+          url: `/app/get/a/count`,
           method: "GET",
         };
       },

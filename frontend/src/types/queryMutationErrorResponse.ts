@@ -7,4 +7,10 @@ export interface IQueryMutationErrorResponse {
   };
 }
 
+export interface IMeta {
+  totalDoc: number;
+  currentPage?: number;
+  limit?: boolean;
+}
+
 export type TSearchParams = { searchParams: Promise<{ [key: string]: string | undefined }> };

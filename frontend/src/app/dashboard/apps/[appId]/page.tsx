@@ -1,7 +1,7 @@
-import AppOverview from "@/components/apps/appOverview/AppOverview";
+import AppOverviewView from "@/views/dashboard/apps/AppOverviewView";
 
 const page = () => {
-  return <AppOverview />;
+  return <AppOverviewView />;
 };
 
 export default page;
