@@ -1,80 +1,86 @@
 import jwt from "jsonwebtoken";
 import { join } from "path";
+import { v4 } from "uuid";
+import { stripe } from "../../../app";
 import config from "../../config";
+import AppError from "../../errors/AppError";
 import prisma from "../../lib/prisma";
 import { getFileContent } from "../../utils";
+import userUtils from "../../utils/user.utils";
 import { ISubscriptionCheckoutSessionPayload } from "./subscription.interface";
 const successFilePath = join(__dirname, "../../templates/success.html");
 const failedFilePath = join(__dirname, "../../templates/error.html");
 const createSubscription = async (userId: string, planId: string) => {
-  // const plan = await prisma.plan.findUnique({
-  //   where: { id: planId },
-  // });
+  const plan = await prisma.plan.findUnique({
+    where: { id: planId },
+  });
 
-  // if (!plan) {
-  //   throw new AppError(404, "Plan not found");
-  // }
-  // const productsList = await stripe.products.list({
-  //   limit: 100,
-  // });
+  if (!plan) {
+    throw new AppError(404, "Plan not found");
+  }
 
-  // const priceId = productsList.data.find((product) => product.id === plan.stripeProdId);
+  const priceId = plan.stripePriceId;
 
-  // if (!priceId || !priceId?.default_price) {
-  //   throw new AppError(404, "Plan not found");
-  // }
+  if (!priceId) {
+    throw new AppError(402, "Cant create subscription");
+  }
 
-  // const customerId = await userUtils.getUserCustomeridByUserId(userId);
+  const customerId = await userUtils.getUserCustomeridByUserId(userId);
 
-  // const ulrs = {
-  //   success: config.SERVER_URL + "/api/v1/subscription/confirm",
-  //   cancel: config.SERVER_URL + "/api/v1/subscription/cancel",
-  // };
+  const ulrs = {
+    success: config.SERVER_URL + "/api/v1/subscription/confirm",
+    cancel: config.SERVER_URL + "/api/v1/subscription/cancel",
+  };
 
-  // const subscriptionModelId = v4();
+  const subscriptionModelId = v4();
 
-  // const payloadData: ISubscriptionCheckoutSessionPayload = {
-  //   id: subscriptionModelId,
-  //   userId,
-  // };
+  const payloadData: ISubscriptionCheckoutSessionPayload = {
+    id: subscriptionModelId,
+    userId,
+  };
 
-  // const token = jwt.sign(payloadData, config.ACCESS_TOKEN.SECRET as string, { expiresIn: "5m" });
+  const token = jwt.sign(payloadData, config.ACCESS_TOKEN.SECRET as string, { expiresIn: "5m" });
 
-  // const session = await stripe.checkout.sessions.create({
-  //   mode: "subscription",
-  //   payment_method_types: ["card"],
-  //   line_items: [
-  //     {
-  //       price: priceId.default_price as string,
-  //       quantity: 1,
-  //     },
-  //   ],
-  //   metadata: {
-  //     internalSubId: subscriptionModelId,
-  //     userId,
-  //   },
-  //   allow_promotion_codes: true,
-  //   customer: customerId,
-  //   success_url: ulrs.success + `?sub_token=${token}`,
-  //   cancel_url: ulrs.cancel + `?sub_token=${token}`,
-  // });
+  const session = await stripe.checkout.sessions.create({
+    mode: "subscription",
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price: priceId as string,
+        quantity: 1,
+      },
+    ],
+    metadata: {
+      internalSubId: subscriptionModelId,
+      userId,
+    },
+    subscription_data: {
+      metadata: {
+        internalSubId: subscriptionModelId,
+        userId,
+      },
+    },
+    allow_promotion_codes: true,
+    customer: customerId,
+    success_url: ulrs.success + `?sub_token=${token}`,
+    cancel_url: ulrs.cancel + `?sub_token=${token}`,
+  });
 
-  // await prisma.subscription.create({
-  //   data: {
-  //     id: subscriptionModelId,
-  //     status: "incomplete",
-  //     userId: userId,
-  //     trialPeriodDays: plan.trialPeriodDays,
-  //     stripeSubscriptionId: "",
-  //     stripeCustomerId: customerId,
-  //     planId: plan.id,
-  //     startDate: new Date(),
-  //     price: plan.price,
-  //   },
-  // });
+  await prisma.subscription.create({
+    data: {
+      id: subscriptionModelId,
+      status: "incomplete",
+      userId: userId,
+      trialPeriodDays: plan.trialPeriodDays,
+      stripeSubscriptionId: "",
+      stripeCustomerId: customerId,
+      planId: plan.id,
+      startDate: new Date(),
+      price: plan.price,
+    },
+  });
 
-  // return session
-  return { userId, planId, url: "https://stupid.com" };
+  return session;
 };
 
 const subscriptionPaymentConfirm = async (token?: string) => {

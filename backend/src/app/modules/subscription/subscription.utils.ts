@@ -2,6 +2,7 @@ import { v4 } from "uuid";
 import AppError from "../../errors/AppError";
 import prisma from "../../lib/prisma";
 import planSeed, { freePlanId } from "../../utils/plan.utils";
+import userUtils from "../../utils/user.utils";
 
 interface IProps {
   durationInMonths: number;
@@ -33,6 +34,7 @@ const getUserCurrentSubscriptionId = async (userId: string) => {
     },
     select: {
       currentSubscriptionId: true,
+      stripeCustomerId: true,
     },
   });
 
@@ -55,11 +57,14 @@ const getUserCurrentSubscriptionId = async (userId: string) => {
   }
 
   const subscriptionId = v4();
+  const customerId =
+    userInfo.stripeCustomerId || (await userUtils.getUserCustomeridByUserId(userId));
   await prisma.subscription.create({
     data: {
       id: subscriptionId,
       status: "active",
       userId: userId,
+      stripeCustomerId: customerId,
       planId: freePlanId,
       price: 0,
       startDate: new Date(),
@@ -74,6 +79,7 @@ const getUserCurrentSubscriptionId = async (userId: string) => {
       currentSubscriptionId: subscriptionId,
     },
   });
+
   if (userInfo?.currentSubscriptionId) {
     await prisma.subscription.delete({
       where: {

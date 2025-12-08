@@ -60,7 +60,6 @@ const getUsersAllApps = async (userId: string, query: Record<string, unknown>) =
     .filter();
 
   const prismaQuery = quertObj.getPrismaQuery();
-  console.log();
 
   const apps = await prisma.app.findMany({
     ...prismaQuery,
@@ -136,6 +135,38 @@ const UpdateAppByAppId = async (appId: string, userId: string, payload: Partial<
   }
 
   ["apiKeyHash", "userId", "id"].forEach((key) => delete payload[key as keyof App]);
+
+  if (payload.isActive) {
+    const subscriptionId = await subscriptionUtils.getUserCurrentSubscriptionId(userId);
+
+    const subscription = await prisma.subscription.findUniqueOrThrow({
+      where: { id: subscriptionId },
+    });
+
+    if (!subscription) {
+      throw new AppError(404, "Subscription not found");
+    }
+
+    const plan = await prisma.plan.findUnique({
+      where: { id: subscription.planId },
+      select: { appLimit: true },
+    });
+
+    if (!plan) {
+      throw new AppError(404, "Wrong plan. Please contact support.");
+    }
+
+    const totalApps = await prisma.app.count({
+      where: { userId: userId, isActive: true },
+    });
+
+    if (totalApps >= plan.appLimit) {
+      throw new AppError(
+        400,
+        "You have reached the maximum number of apps. You cant activate this app"
+      );
+    }
+  }
 
   const result = await prisma.app.update({ where: { id: appId }, data: payload });
   return { ...result, apiKeyHash: undefined };

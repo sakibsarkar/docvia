@@ -10,7 +10,7 @@ export const basicPlan = async () => {
   });
 
   if (!isExist) {
-    await prisma.plan.create({
+    const plan = await prisma.plan.create({
       data: {
         id: freePlanId,
         appLimit: 1,
@@ -22,11 +22,13 @@ export const basicPlan = async () => {
         isActive: true,
       },
     });
+    return plan;
   }
 };
 
 const planSeed = async () => {
-  await basicPlan();
+  const result = await basicPlan();
+  return result;
 };
 
 export default planSeed;

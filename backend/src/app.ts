@@ -2,18 +2,23 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import path from "path";
+import Stripe from "stripe";
+import config from "./app/config";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import subscriptionWebhook from "./app/modules/subscription/subscription.webhook";
 import router from "./app/routes";
 import sendResponse from "./app/utils/send.response";
 
+export const stripe = new Stripe(config.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2025-06-30.basil",
+});
 const app: Application = express();
 
 app.post(
   "/api/v1/subscription/stripe/webhook",
   express.raw({ type: "application/json" }),
-  subscriptionWebhook.subscriptionComplete
+  subscriptionWebhook.mainHook
 );
 
 app.use("/assets", express.static(path.join(process.cwd(), "public")));
@@ -31,11 +36,15 @@ app.use(
 app.use("/api/v1", router);
 
 // test route
-app.get("/", (_req: Request, res: Response) => {
+app.get("/", async (_req: Request, res: Response) => {
+  const session = await stripe.billingPortal.sessions.create({
+    customer: "cus_TZFYAh8yx8nx5C",
+    return_url: "https://your-website.com/account", // where Stripe redirects after they close the portal
+  });
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    data: null,
+    data: session.url,
     message: "App is running",
   });
 });
