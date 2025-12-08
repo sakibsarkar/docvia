@@ -1,4 +1,5 @@
 import { App } from "@prisma/client";
+import QueryBuilder from "../../builder/QueryBuilder";
 import AppError from "../../errors/AppError";
 import prisma from "../../lib/prisma";
 import subscriptionUtils from "../subscription/subscription.utils";
@@ -46,13 +47,28 @@ const createApp = async (payload: TClientAppCreatePayload, userId: string) => {
   return { ...app, apiKey: undefined };
 };
 
-const getUsersAllApps = async (userId: string) => {
+const getUsersAllApps = async (userId: string, query: Record<string, unknown>) => {
+  const quertObj = new QueryBuilder({
+    ...query,
+    isActive: query.isActive ? (query.isActive === "true" ? true : false) : undefined,
+    userId: userId,
+  })
+    .paginate()
+    .sort()
+    .search(["appName", "authorizedOrigin"])
+    .fields()
+    .filter();
+
+  const prismaQuery = quertObj.getPrismaQuery();
+  console.log();
+
   const apps = await prisma.app.findMany({
-    where: { userId },
+    ...prismaQuery,
     select: {
       apiKeyHash: false,
       createdAt: true,
       updatedAt: true,
+      isActive: true,
       userId: true,
       appName: true,
       authorizedOrigin: true,
@@ -60,7 +76,11 @@ const getUsersAllApps = async (userId: string) => {
     },
   });
 
-  return apps;
+  const total = await prisma.app.count({
+    where: prismaQuery.where || {},
+  });
+
+  return { apps, total };
 };
 
 const getAppById = async (appId: string, userId: string) => {

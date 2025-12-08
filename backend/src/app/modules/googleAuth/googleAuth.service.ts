@@ -53,7 +53,6 @@ const myGoogleConnection = async (userId: string) => {
         expiry_date: row.expiry_date ? new Date(row.expiry_date).getTime() : undefined,
       });
       const { token } = await oauth2.getAccessToken();
-      console.log({ prev: row.accessToken, new: token });
 
       const refreshed = await prisma.googleAuthToken.update({
         where: { userId: userId },
@@ -67,8 +66,6 @@ const myGoogleConnection = async (userId: string) => {
       // ignore refresh errors
     }
   }
-
-  console.log(row.accessToken);
 
   const isAccessTokenValid =
     row.accessToken && !isExpired

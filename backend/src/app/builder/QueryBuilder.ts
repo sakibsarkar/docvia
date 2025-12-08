@@ -77,9 +77,7 @@ class QueryBuilder {
   }
 
   getPrismaQuery(whereQuery?: Record<string, unknown>) {
-    if (!whereQuery) {
-      return this.prismaQuery as { [x: string]: never };
-    }
+    if (!whereQuery) return this.prismaQuery as { [x: string]: never };
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

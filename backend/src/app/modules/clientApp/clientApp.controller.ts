@@ -17,12 +17,18 @@ const creatApp = catchAsyncError(async (req, res) => {
 
 const getUsersAllApps = catchAsyncError(async (req, res) => {
   const user = req.user!;
-  const result = await clientAppService.getUsersAllApps(user.id);
+  const query = req.query;
+  const { apps, total } = await clientAppService.getUsersAllApps(user.id, query);
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    data: result,
+    data: apps,
     message: "Apps fetched successfully",
+    meta: {
+      totalDoc: total,
+      currentPage: 1,
+      limit: apps.length,
+    },
   });
 });
 const getAppById = catchAsyncError(async (req, res) => {
