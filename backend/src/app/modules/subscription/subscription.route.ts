@@ -9,10 +9,12 @@ router.post(
   subscriptionController.createSubscription
 );
 router.get(
-  "/get-details",
+  "/details",
   authMiddleware.isAuthenticateUser(),
   subscriptionController.getUsersCurrentSubscriptionDetails
 );
+router.get("/portal-url", subscriptionController.getSubscriptionManagePortalUrl);
+router.get("/plans", subscriptionController.getAllActivePlans);
 
 // hit by stripe checkout session redirect
 // @on payment success

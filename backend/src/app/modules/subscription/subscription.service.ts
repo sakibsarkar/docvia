@@ -152,6 +152,33 @@ const getUsersCurrentSubscriptionDetails = async (userId: string) => {
   };
 };
 
+const getSubscriptionManagePortalUrl = async (userId: string) => {
+  const customerId = await userUtils.getUserCustomeridByUserId(userId);
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: `${config.frontend_base_url}/dashboard/settings/plan`,
+  });
+
+  return session.url;
+};
+
+const getAllActivePlans = async () => {
+  const result = prisma.plan.findMany({
+    where: {
+      isActive: true,
+    },
+    omit: {
+      stripePriceId: true,
+      updatedAt: true,
+    },
+    orderBy: {
+      order: "asc",
+    },
+  });
+
+  return result;
+};
+
 const subscriptionPaymentConfirm = async (token?: string) => {
   if (!token) {
     return getFileContent(failedFilePath);
@@ -217,5 +244,7 @@ const subscriptionService = {
   subscriptionPaymentConfirm,
   subscriptionPaymentCancel,
   getUsersCurrentSubscriptionDetails,
+  getSubscriptionManagePortalUrl,
+  getAllActivePlans,
 };
 export default subscriptionService;

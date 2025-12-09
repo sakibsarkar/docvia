@@ -43,10 +43,10 @@ const handleCheckoutSessionSuccess = async (session: Stripe.Checkout.Session) =>
   return { status: 400, message: "Invalid session" };
 };
 
-const handleSubscriptionUpdate = async (session: Stripe.Subscription, none: string) => {
+const handleSubscriptionUpdate = async (session: Stripe.Subscription) => {
   return { status: 200, message: "Subscription updated" };
 };
-const handleSubscriptionCanceled = async (session: Stripe.Subscription, none: string) => {
+const handleSubscriptionCanceled = async (session: Stripe.Subscription) => {
   const isCanceled = session.status === "canceled";
   const internalSubId = session.metadata?.internalSubId;
   const customerId = session.customer;
@@ -62,7 +62,7 @@ const handleSubscriptionCanceled = async (session: Stripe.Subscription, none: st
   });
 
   let previousTrialPlan = await prisma.subscription.findFirst({
-    where: { userId: session.metadata?.userId as string, price: 0 },
+    where: { userId: session.metadata?.userId, price: 0 },
     orderBy: { createdAt: "desc" },
   });
 
@@ -92,6 +92,16 @@ const handleSubscriptionCanceled = async (session: Stripe.Subscription, none: st
         startDate: new Date(),
       },
     });
+  } else {
+    await prisma.subscription.update({
+      where: {
+        id: previousTrialPlan.id,
+      },
+      data: {
+        status: "active",
+        startDate: new Date(),
+      },
+    });
   }
 
   let planLimitation = await prisma.plan.findFirst({
@@ -109,7 +119,7 @@ const handleSubscriptionCanceled = async (session: Stripe.Subscription, none: st
 
     const totalActiveApps = await prisma.app.count({
       where: {
-        userId: session.metadata?.userId as string,
+        userId: session.metadata?.userId,
         isActive: true,
       },
     });
@@ -132,7 +142,7 @@ const handleSubscriptionCanceled = async (session: Stripe.Subscription, none: st
 
   await prisma.user.update({
     where: {
-      id: session.metadata?.userId as string,
+      id: session.metadata?.userId,
     },
     data: {
       currentSubscriptionId: previousTrialPlan.id,

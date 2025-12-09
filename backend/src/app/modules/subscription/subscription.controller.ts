@@ -13,6 +13,37 @@ const createSubscription = catchAsyncError(async (req, res) => {
     message: "Checkout session link",
   });
 });
+const getUsersCurrentSubscriptionDetails = catchAsyncError(async (req, res) => {
+  const user = req.user!;
+  const result = await subscriptionService.getUsersCurrentSubscriptionDetails(user.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: result,
+    message: "Subscription details fetched successfully",
+  });
+});
+
+const getSubscriptionManagePortalUrl = catchAsyncError(async (req, res) => {
+  const user = req.user!;
+  const result = await subscriptionService.getSubscriptionManagePortalUrl(user.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: { url: result },
+    message: "Subscription manage portal url fetched successfully",
+  });
+});
+
+const getAllActivePlans = catchAsyncError(async (req, res) => {
+  const result = await subscriptionService.getAllActivePlans();
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: result,
+    message: "All active plans fetched successfully",
+  });
+});
 
 const subscriptionPaymentConfirm = catchAsyncError(async (req, res) => {
   const token = req.query.sub_token as string;
@@ -26,21 +57,13 @@ const subscriptionPaymentCancel = catchAsyncError(async (req, res) => {
   res.send(file);
 });
 
-const getUsersCurrentSubscriptionDetails = catchAsyncError(async (req, res) => {
-  const user = req.user!;
-  const result = await subscriptionService.getUsersCurrentSubscriptionDetails(user.id);
-  sendResponse(res, {
-    success: true,
-    statusCode: 200,
-    data: result,
-    message: "Subscription details fetched successfully",
-  });
-});
 const subscriptionController = {
   createSubscription,
   subscriptionPaymentConfirm,
   subscriptionPaymentCancel,
   getUsersCurrentSubscriptionDetails,
+  getSubscriptionManagePortalUrl,
+  getAllActivePlans,
 };
 
 export default subscriptionController;
