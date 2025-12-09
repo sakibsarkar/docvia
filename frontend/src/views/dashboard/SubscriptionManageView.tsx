@@ -1,54 +1,25 @@
 "use client";
 
+import ManageSubscription from "@/components/dashboard/subscriptionManage/ManageSubscription";
 import SubscriptionManageViewSkeleton from "@/components/dashboard/subscriptionManage/SubscriptionManageViewSkeleton";
 import { useGetCurrentSubscriptionDetailsQuery } from "@/redux/features/subscription/subscription.api";
-import { AlertCircle, CheckCircle2, CreditCard } from "lucide-react";
+import dateUtils from "@/utils/date";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 
-// Mock subscription data - replace with actual API call
-const subscriptionData = {
-  id: "3286267e-1bd5-4d02-a33b-f72cb24481e1",
-  userId: "33f4d9a5-8784-42cf-b52a-fa9efcb62b46",
-  planId: "dd583a7d-2a28-4610-9cr3-b0875362dbe8",
-  price: 200,
-  trialPeriodDays: 0,
-  startDate: "2025-12-09T06:26:59.551Z",
-  status: "active",
-  isActive: true,
-  createdAt: "2025-12-09T06:26:59.557Z",
-  planInfo: {
-    name: "Premium",
-    price: 200,
-    trialPeriodDays: 0,
-    appLimit: 5,
-    customization: true,
-    durationMonths: 1,
-  },
-  nextBillingDate: "2026-01-09T06:27:18.000Z",
+// Get duration label
+const getDurationLabel = (months?: number) => {
+  if (!months) return "";
+  if (months === 1) return "Monthly";
+  if (months === 12) return "Yearly";
+  return `${months} months`;
 };
 const SubscriptionManageView = () => {
   const { data, isLoading } = useGetCurrentSubscriptionDetailsQuery(undefined);
 
   const subscriptionData = data?.data;
   const plan = subscriptionData?.planInfo;
+  const isFreePlan = plan?.price === 0;
   const isUnlimited = plan?.appLimit === -1;
-
-  // Format date helper
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  // Get duration label
-  const getDurationLabel = (months?: number) => {
-    if (!months) return "";
-    if (months === 1) return "Monthly";
-    if (months === 12) return "Yearly";
-    return `${months} months`;
-  };
 
   if (isLoading) {
     return <SubscriptionManageViewSkeleton />;
@@ -59,7 +30,7 @@ const SubscriptionManageView = () => {
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-2xl font-semibold text-gray-900">Subscription & Billing</h1>
+          <h1 className="mb-2 text-2xl font-semibold text-primary">Subscription & Billing</h1>
           <p className="text-sm text-gray-600">Manage your subscription plan and billing details</p>
         </div>
 
@@ -76,7 +47,7 @@ const SubscriptionManageView = () => {
 
           {/* Plan Card */}
           <div className="mb-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">Current Plan</h2>
+            <h2 className="mb-4 text-lg font-semibold text-primary">Current Plan</h2>
             <div
               className="rounded-lg border p-6"
               style={{
@@ -87,41 +58,66 @@ const SubscriptionManageView = () => {
               <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
                 {/* Plan Name */}
                 <div>
-                  <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
+                  <p className="text-primaryuppercase mb-2 text-xs font-medium tracking-wide">
                     Plan Name
                   </p>
-                  <p className="text-xl font-semibold text-gray-900">{plan?.name}</p>
+                  <p className="text-xl font-semibold text-primary">{plan?.name}</p>
                 </div>
 
                 {/* Price */}
                 <div>
-                  <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
+                  <p className="text-primaryuppercase mb-2 text-xs font-medium tracking-wide">
                     Price
                   </p>
-                  <p className="text-xl font-semibold text-gray-900">${plan?.price}</p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    per {getDurationLabel(plan?.durationMonths).toLowerCase()}
+                  <p className="text-xl font-semibold text-primary">
+                    {}
+                    {isFreePlan ? "Free" : `$${plan?.price}`}
                   </p>
+                  {!isFreePlan ? (
+                    <p className="mt-1 text-xs text-gray-500">
+                      per {getDurationLabel(plan?.durationMonths).toLowerCase()}
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </div>
 
                 {/* App Limit */}
                 <div>
-                  <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
+                  <p className="text-primaryuppercase mb-2 text-xs font-medium tracking-wide">
                     App Limit
                   </p>
-                  <p className="text-xl font-semibold text-gray-900">
+                  <p className="text-xl font-semibold text-primary">
                     {plan?.appCreated || 0} / {isUnlimited ? "Unlimited" : plan?.appLimit}
                   </p>
                 </div>
 
                 {/* Billing Frequency */}
                 <div>
-                  <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
-                    Frequency
-                  </p>
-                  <p className="text-xl font-semibold text-gray-900">
-                    {getDurationLabel(plan?.durationMonths)}
-                  </p>
+                  {isFreePlan ? (
+                    <>
+                      <p className="text-primaryuppercase mb-2 text-xs font-medium tracking-wide">
+                        Expires On
+                      </p>
+                      <p className="text-xl font-semibold text-destructive">
+                        {dateUtils.formatToMMMdddYYYY(
+                          dateUtils.getExpirationDate(
+                            subscriptionData?.createdAt,
+                            plan.trialPeriodDays
+                          )
+                        )}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-primaryuppercase mb-2 text-xs font-medium tracking-wide">
+                        Frequency
+                      </p>
+                      <p className="text-xl font-semibold text-primary">
+                        {getDurationLabel(plan?.durationMonths)}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -129,7 +125,7 @@ const SubscriptionManageView = () => {
 
           {/* Plan Features */}
           <div className="mb-6">
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">Plan Features</h3>
+            <h3 className="mb-3 text-sm font-semibold text-primary">Plan Features</h3>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-green-600" />
@@ -146,18 +142,7 @@ const SubscriptionManageView = () => {
               )}
             </div>
           </div>
-          <button
-            className="w-full rounded-lg px-6 py-3 font-medium transition-colors"
-            style={{
-              backgroundColor: "#2563eb",
-              color: "#ffffff",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#1d4ed8")}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2563eb")}
-          >
-            <CreditCard className="mr-2 inline h-4 w-4" />
-            Manage Subscription
-          </button>
+          <ManageSubscription />
         </div>
 
         {/* Billing Details */}
@@ -165,37 +150,35 @@ const SubscriptionManageView = () => {
           className="mb-6 rounded-lg border p-6"
           style={{ borderColor: "#e2e8f0", backgroundColor: "#ffffff" }}
         >
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Billing Details</h2>
+          <h2 className="mb-4 text-lg font-semibold text-primary">Billing Details</h2>
 
           <div className="space-y-4">
             {/* Subscription Start */}
             <div className="border-b pb-4" style={{ borderColor: "#e2e8f0" }}>
-              <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
+              <p className="text-primaryuppercase mb-2 text-xs font-medium tracking-wide">
                 Subscription Start
               </p>
-              <p className="text-base font-medium text-gray-900">
-                {formatDate(subscriptionData?.startDate)}
+              <p className="text-base font-medium text-primary">
+                {dateUtils.formatToMMMdddYYYY(subscriptionData?.startDate)}
               </p>
             </div>
 
             {/* Next Billing Date */}
             <div className="border-b pb-4" style={{ borderColor: "#e2e8f0" }}>
-              <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
+              <p className="text-primaryuppercase mb-2 text-xs font-medium tracking-wide">
                 Next Billing Date
               </p>
-              <p className="text-base font-medium text-gray-900">
-                {formatDate(subscriptionData?.nextBillingDate)}
+              <p className="text-base font-medium text-primary">
+                {dateUtils.formatToMMMdddYYYY(subscriptionData?.nextBillingDate)}
               </p>
             </div>
 
             {/* Status */}
             <div>
-              <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
-                Status
-              </p>
+              <p className="text-primaryuppercase mb-2 text-xs font-medium tracking-wide">Status</p>
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-green-600"></div>
-                <p className="text-base font-medium text-gray-900 capitalize">
+                <p className="text-base font-medium text-primary capitalize">
                   {subscriptionData?.status}
                 </p>
               </div>

@@ -1,40 +1,117 @@
-import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+import { Github, Linkedin, Twitter } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-gray-200 bg-white py-10">
-      <div className="wrapper flex flex-col items-center justify-between gap-4 pb-6 md:flex-row">
-        {/* Copyright */}
-        <Link href="/" className="text-lg font-semibold">
-          Logo
-        </Link>
+    <footer className="border-t border-border/40 bg-card/50 py-12 md:py-16">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        {/* Footer Content */}
+        <div className="mb-12 grid gap-8 md:grid-cols-4">
+          {/* Brand */}
+          <div>
+            <div className="mb-4 flex items-center gap-2">
+              <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500" />
+              <span className="font-bold text-primary">AIChat</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Build AI chatbots that understand your business.
+            </p>
+          </div>
 
-        {/* Links */}
-        <ul className="flex flex-wrap items-center justify-center gap-5 text-sm text-gray-500">
-          <li>
-            <Link href="/privacy" className="transition-colors hover:text-blue-500 hover:underline">
+          {/* Links */}
+          <div>
+            <h4 className="mb-4 text-sm font-semibold tracking-wider text-foreground uppercase">
+              Product
+            </h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>
+                <a href="#" className="transition-colors hover:text-primary">
+                  Features
+                </a>
+              </li>
+              <li>
+                <a href="#" className="transition-colors hover:text-primary">
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a href="#" className="transition-colors hover:text-primary">
+                  Documentation
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className="mb-4 text-sm font-semibold tracking-wider text-foreground uppercase">
+              Company
+            </h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>
+                <a href="#" className="transition-colors hover:text-primary">
+                  About
+                </a>
+              </li>
+              <li>
+                <a href="#" className="transition-colors hover:text-primary">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href="#" className="transition-colors hover:text-primary">
+                  Contact
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Social */}
+          <div>
+            <h4 className="mb-4 text-sm font-semibold tracking-wider text-foreground uppercase">
+              Connect
+            </h4>
+            <div className="flex gap-3">
+              <a
+                href="#"
+                className="hover:glow-cyan flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary"
+              >
+                <Github className="h-4 w-4" />
+              </a>
+              <a
+                href="#"
+                className="hover:glow-cyan flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary"
+              >
+                <Twitter className="h-4 w-4" />
+              </a>
+              <a
+                href="#"
+                className="hover:glow-cyan flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary"
+              >
+                <Linkedin className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <Separator className="mb-8 bg-border/40" />
+
+        {/* Bottom Section */}
+        <div className="flex flex-col items-center justify-between text-sm text-muted-foreground md:flex-row">
+          <p>&copy; 2025 AIChat. All rights reserved.</p>
+          <div className="mt-4 flex gap-6 md:mt-0">
+            <a href="#" className="transition-colors hover:text-primary">
               Privacy Policy
-            </Link>
-          </li>
-          <li>
-            <Link href="/terms" className="transition-colors hover:text-blue-500 hover:underline">
+            </a>
+            <a href="#" className="transition-colors hover:text-primary">
               Terms of Service
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="mailto:support@yourcompany.com"
-              className="transition-colors hover:text-blue-500 hover:underline"
-            >
-              Contact
-            </Link>
-          </li>
-        </ul>
-      </div>{" "}
-      {/* copyright */}
-      <p className="text-center font-poppins text-sm text-gray-500">
-        © Copyright {new Date().getFullYear()}. All Rights Reserved.
-      </p>
+            </a>
+            <a href="#" className="transition-colors hover:text-primary">
+              Cookie Settings
+            </a>
+          </div>
+        </div>
+      </div>
     </footer>
   );
 };

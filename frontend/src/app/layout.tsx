@@ -1,7 +1,7 @@
+import ClientProviders from "@/provider/ClientProviders";
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
-import ClientProviders from "@/provider/ClientProviders";
 
 const poppins = Poppins({
   variable: "--font-poppins",

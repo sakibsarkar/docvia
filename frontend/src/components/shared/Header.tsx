@@ -1,27 +1,50 @@
-import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 const Header = () => {
   return (
-    <header className="wrapper py-4">
-      <nav className="sticky flex items-center justify-between rounded-4xl border border-gray-300 bg-white px-5 py-3">
-        {/* logo */}
-        <Link className="text-[18px] font-semibold" href="/">
-          Logo
-        </Link>
-
-        {/* header link */}
+    <header className="border-border/40 bg-background/80 sticky top-0 z-50 border-b backdrop-blur-sm">
+      <div className="container mx-auto flex items-center justify-between px-4 py-4 md:px-6 lg:px-8">
+        {/* Logo */}
         <div className="flex items-center gap-2">
-          <Link href="/login" className="rounded-3xl bg-gray-100 px-5 py-2 text-gray-500">
-            Login
-          </Link>
-          <Link
-            href="/dashboard"
-            className="rounded-3xl bg-blue-500 px-5 py-2 text-white hover:bg-blue-600"
-          >
-            Get started
-          </Link>
+          <div className="bg-primary h-8 w-8 rounded-lg" />
+          <span className="text-foreground text-xl font-bold">AIChat</span>
         </div>
-      </nav>
+
+        {/* Navigation - Hidden on mobile */}
+        <nav className="hidden items-center gap-6 md:flex">
+          <a
+            href="#"
+            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+          >
+            Features
+          </a>
+          <a
+            href="#"
+            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+          >
+            Pricing
+          </a>
+          <a
+            href="#"
+            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+          >
+            Documentation
+          </a>
+        </nav>
+
+        {/* Auth Buttons */}
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+            Login
+          </Button>
+          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            Get Started
+          </Button>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
     </header>
   );
 };
