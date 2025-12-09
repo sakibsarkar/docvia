@@ -31,13 +31,13 @@ const AppSecret = ({ appId }: { appId: string }) => {
   };
   return (
     <div className="rounded-md">
-      <label className="text-[13px] font-medium text-gray-900">API Key</label>
-      <p className="text-[12px] text-gray-600">
+      <label className="text-[13px] font-medium text-foreground">API Key</label>
+      <p className="text-[12px] text-muted-foreground">
         Used when interacting with the API. This KEY is unique to your app and cannot be changed.
       </p>
       <div className="mt-2 flex items-center gap-2">
-        <div className="flex flex-1 items-center justify-between gap-1 rounded-md border border-gray-200 bg-gray-100 px-3 py-2.5">
-          <span className="flex flex-1 text-sm text-gray-700">
+        <div className="flex flex-1 items-center justify-between gap-1 rounded-md border border-border bg-input px-3 py-2.5">
+          <span className="flex flex-1 text-sm text-foreground">
             {isLoading && showSecret
               ? "Loading..."
               : showSecret

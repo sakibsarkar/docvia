@@ -24,7 +24,7 @@ const PricingPlans = async () => {
         alt=""
         width={850}
         height={945}
-        className="absolute top-[-70%] left-[-10%] z-[1] w-[90%] max-w-[850px] object-contain opacity-[0.9]"
+        className="absolute top-[-50%] left-[-12%] z-[1] w-[90%] max-w-[850px] object-contain opacity-[0.9]"
       />
     </div>
   );

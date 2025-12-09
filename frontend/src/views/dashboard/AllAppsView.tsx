@@ -27,7 +27,7 @@ const AllAppsView = () => {
     <section className="h-full w-full">
       {/* Header */}
       <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-        <h1 className="flex items-center gap-2 font-poppins text-[22px] font-medium text-gray-900">
+        <h1 className="flex items-center gap-2 font-poppins text-[22px] font-medium text-foreground">
           Apps
           <span className="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-base font-medium text-gray-700">
             {data?.meta.totalDoc || 0} apps
@@ -42,7 +42,7 @@ const AllAppsView = () => {
               type="text"
               placeholder="Search Apps"
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 w-[200px] rounded-md border border-gray-200 bg-white pr-3 pl-9 text-[14px] text-gray-900 placeholder-gray-400 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 md:w-[240px]"
+              className="h-9 w-[200px] rounded-md border border-border bg-white pr-3 pl-9 text-[14px] text-background placeholder-background/50 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 md:w-[240px]"
             />
           </div>
 
@@ -59,7 +59,7 @@ const AllAppsView = () => {
 
       {/* Tabs */}
       <div className="relative mb-6">
-        <ul className="flex gap-3 border-b border-gray-200" role="tablist">
+        <ul className="flex gap-3 border-b border-border" role="tablist">
           {tabs.map((tab) => (
             <li key={tab.id} role="none">
               <button

@@ -31,7 +31,7 @@ const CodeSnippet = () => {
         <div className="relative mx-auto max-w-4xl">
           {/* Code Block */}
 
-          <div className="p-[0.5px 0.5px 0.5px 1px] relative z-3 rounded-[6px] border-1 border-[transparent] bg-[#72768a36] backdrop-blur-[35px]">
+          <div className="p-[0.5px 0.5px 0.5px 1px] relative z-3 rounded-[6px] border-1 border-[transparent] bg-backup backdrop-blur-[35px]">
             <div className="primaryRadialGradient relative z-10 rounded-[5px]">
               <div className="overflow-x-auto p-6 font-mono text-sm md:p-8">
                 <pre className="text-muted-foreground">

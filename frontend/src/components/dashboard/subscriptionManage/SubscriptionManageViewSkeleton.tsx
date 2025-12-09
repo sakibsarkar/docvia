@@ -2,7 +2,7 @@ import Skeleton from "@/components/ui/Skeleton";
 
 const SubscriptionManageViewSkeleton = () => {
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: "#f8f8fb" }}>
+    <div className="min-h-screen p-6">
       <div className="mx-auto">
         {/* Header Skeleton */}
         <div className="mb-8">
@@ -11,10 +11,7 @@ const SubscriptionManageViewSkeleton = () => {
         </div>
 
         {/* Main Card Skeleton */}
-        <div
-          className="mb-6 rounded-lg border p-6"
-          style={{ borderColor: "#e2e8f0", backgroundColor: "#ffffff" }}
-        >
+        <div className="mb-6 rounded-lg border border-border bg-card p-6">
           {/* Status Badge Skeleton */}
           <div className="mb-6 flex items-center gap-2">
             <Skeleton className="h-5 w-5 rounded-full" />
@@ -24,7 +21,7 @@ const SubscriptionManageViewSkeleton = () => {
           {/* Plan Card Skeleton */}
           <div className="mb-6">
             <Skeleton className="mb-4 h-6 w-24" />
-            <div className="rounded-lg border p-6" style={{ borderColor: "#e2e8f0" }}>
+            <div className="rounded-lg border border-border p-6">
               <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
                 {[...Array(4)].map((_, i) => (
                   <div key={i}>
@@ -56,14 +53,11 @@ const SubscriptionManageViewSkeleton = () => {
         </div>
 
         {/* Billing Details Skeleton */}
-        <div
-          className="mb-6 rounded-lg border p-6"
-          style={{ borderColor: "#e2e8f0", backgroundColor: "#ffffff" }}
-        >
+        <div className="mb-6 rounded-lg border border-border bg-card p-6">
           <Skeleton className="mb-4 h-6 w-32" />
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="border-b pb-4" style={{ borderColor: "#e2e8f0" }}>
+              <div key={i} className="border-b border-border pb-4">
                 <Skeleton className="mb-2 h-4 w-24" />
                 <Skeleton className="h-5 w-40" />
               </div>
@@ -72,10 +66,7 @@ const SubscriptionManageViewSkeleton = () => {
         </div>
 
         {/* Help Section Skeleton */}
-        <div
-          className="rounded-lg border p-4"
-          style={{ borderColor: "#fbbf24", backgroundColor: "#fffbeb" }}
-        >
+        <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex gap-3">
             <Skeleton className="h-5 w-5 flex-shrink-0 rounded-full" />
             <div className="flex-1">

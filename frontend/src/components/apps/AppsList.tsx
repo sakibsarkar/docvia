@@ -3,6 +3,7 @@ import { AppCard } from "@/components";
 import { IApp } from "@/types";
 import { InboxIcon } from "lucide-react";
 import { ComponentType, SVGProps } from "react";
+import AppCardSkeleton from "./AppCardSkeleton";
 
 type EmptyStateProps = {
   Icon?: ComponentType<SVGProps<SVGSVGElement>>;
@@ -14,13 +15,13 @@ type EmptyStateProps = {
 const EmptyState = ({ Icon = InboxIcon, after, before, highlightText }: EmptyStateProps) => {
   return (
     <div className="col-span-full flex min-h-[300px] flex-col items-center justify-center text-center">
-      <Icon className="mb-3 h-8 w-8 text-gray-400" />
-      <h2 className="text-lg font-semibold text-gray-900">{""}</h2>
-      <p className="mt-2 max-w-md text-sm text-gray-400">
+      <Icon className="mb-3 h-8 w-8 text-foreground" />
+      <span className="text-lg font-semibold text-gray-900">{""}</span>
+      <p className="mt-2 max-w-md text-sm text-foreground">
         {before}
 
         {highlightText ? (
-          <span className="rounded px-1 font-semibold text-gray-700">{highlightText}</span>
+          <span className="rounded px-1 font-semibold text-primary">{highlightText}</span>
         ) : (
           " "
         )}
@@ -49,7 +50,7 @@ const AppsList = ({ apps = [], EmptyIcon, isFetching, status }: AppsListProps) =
       ) : isFetching ? (
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-40 animate-pulse rounded-xl bg-gray-100" />
+            <AppCardSkeleton key={i + "appSkeleton"} />
           ))}
         </div>
       ) : (

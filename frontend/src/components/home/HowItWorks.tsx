@@ -24,7 +24,7 @@ const steps = [
 ];
 const HowItWorks = () => {
   return (
-    <section className="border-t border-border/40 py-20 md:py-32">
+    <section className="relative border-t border-border/40 py-20 md:py-32">
       <div className="relative container mx-auto px-4 md:px-6 lg:px-8">
         <h2 className="mb-16 text-center text-4xl font-bold text-balance md:text-5xl">
           How it works
@@ -37,14 +37,14 @@ const HowItWorks = () => {
             <StepCard key={step.number} step={step} />
           ))}
         </div>
-        <Image
-          src="/svgs/neon_bg_grid.svg"
-          alt="hero"
-          width={1000}
-          height={1000}
-          className="absolute top-0 left-0 max-w-[1000px] object-contain"
-        />{" "}
-      </div>
+      </div>{" "}
+      <Image
+        src="/svgs/neon_bg_grid.svg"
+        alt="hero"
+        width={1000}
+        height={1000}
+        className="absolute top-0 left-0 max-w-[1000px] object-contain"
+      />{" "}
     </section>
   );
 };

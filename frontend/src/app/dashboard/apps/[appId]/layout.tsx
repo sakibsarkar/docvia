@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import {
   ArrowRight,
   MessageCircleCode,
@@ -100,9 +102,11 @@ export default function AppDetailsLayout({
     <div className="flex gap-4">
       {/* Sidebar */}
       <aside className="fixed inset-y-0 top-10 lg:z-50 lg:flex lg:w-66 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto px-2 py-2">
+        <div className="bg-glow-blue flex grow flex-col gap-y-5 overflow-y-auto bg-sidebar px-2 py-2">
           <div className="flex items-center justify-between pr-1">
-            <h4 className="font-poppins text-lg font-medium text-gray-900">Administration</h4>
+            <h4 className="font-poppins text-lg font-medium text-sidebar-foreground">
+              Administration
+            </h4>
           </div>
 
           <nav className="flex flex-1 flex-col">
@@ -122,7 +126,7 @@ export default function AppDetailsLayout({
 
       {/* Main */}
       <div className="ml-66 w-full px-4">
-        <div className="sticky top-0 z-30 -mt-6 bg-white px-4 pt-8 pb-6 font-poppins text-[16px] font-medium text-gray-800">
+        <div className="sticky top-0 z-30 -mt-6 border-b border-border bg-background/80 px-4 pt-8 pb-6 font-poppins text-[16px] font-medium text-foreground backdrop-blur-md">
           {pageTitle}
         </div>
         <div className="z-10 px-2">{children}</div>
@@ -170,8 +174,10 @@ function SidebarItem({
           <button
             type="button"
             className={cn(
-              parentActive ? "bg-gray-100" : "",
-              "group flex items-center gap-x-3 rounded-md px-3 py-2 text-left font-poppins text-sm font-normal text-gray-950 hover:bg-gray-200"
+              parentActive
+                ? "bg-sidebar-accent/10 text-sidebar-primary"
+                : "text-sidebar-foreground hover:bg-sidebar-accent/5",
+              "group flex items-center gap-x-3 rounded-md px-3 py-2 text-left font-poppins text-sm font-normal transition-colors"
             )}
             aria-expanded={open}
             aria-controls={groupId}
@@ -180,15 +186,19 @@ function SidebarItem({
             <ItemIcon
               aria-hidden="true"
               className={cn(
-                parentActive ? "text-gray-950" : childActive ? "text-gray-900" : "text-gray-600",
-                "size-4.5 shrink-0"
+                parentActive
+                  ? "text-sidebar-primary"
+                  : childActive
+                    ? "text-sidebar-accent"
+                    : "text-sidebar-foreground/60",
+                "size-4.5 shrink-0 transition-colors"
               )}
             />
             <span className="flex-1">{item.name}</span>
             <ArrowRight
               className={cn(
                 "size-4 transition-transform duration-200",
-                open ? "rotate-90 text-gray-900" : "text-gray-500"
+                open ? "rotate-90 text-sidebar-accent" : "text-sidebar-foreground/40"
               )}
               aria-hidden="true"
             />
@@ -197,13 +207,18 @@ function SidebarItem({
           <Link
             href={item.href}
             className={cn(
-              parentActive ? "bg-gray-100" : "",
-              "group flex items-center gap-x-3 rounded-md px-3 py-2 font-poppins text-sm font-normal text-gray-950 hover:bg-gray-200"
+              parentActive
+                ? "bg-sidebar-accent/10 text-sidebar-primary"
+                : "text-sidebar-foreground hover:bg-sidebar-accent/5",
+              "group flex items-center gap-x-3 rounded-md px-3 py-2 font-poppins text-sm font-normal transition-colors"
             )}
           >
             <ItemIcon
               aria-hidden="true"
-              className={cn(parentActive ? "text-gray-950" : "text-gray-600", "size-4.5 shrink-0")}
+              className={cn(
+                parentActive ? "text-sidebar-primary" : "text-sidebar-foreground/60",
+                "size-4.5 shrink-0 transition-colors"
+              )}
             />
             <span className="flex-1">{item.name}</span>
           </Link>
@@ -227,15 +242,17 @@ function SidebarItem({
                     <Link
                       href={child.href}
                       className={cn(
-                        childIsActive ? "bg-gray-100" : "",
-                        "group flex items-center gap-x-3 rounded-md px-3 py-2 font-poppins text-sm font-normal text-gray-950 hover:bg-gray-200"
+                        childIsActive
+                          ? "bg-sidebar-accent/10 text-sidebar-primary"
+                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/5 hover:text-sidebar-foreground",
+                        "group flex items-center gap-x-3 rounded-md px-3 py-2 font-poppins text-sm font-normal transition-colors"
                       )}
                     >
                       <ChildIcon
                         aria-hidden="true"
                         className={cn(
-                          childIsActive ? "text-gray-950" : "text-gray-600",
-                          "size-4.5 shrink-0"
+                          childIsActive ? "text-sidebar-primary" : "text-sidebar-foreground/50",
+                          "size-4.5 shrink-0 transition-colors"
                         )}
                       />
                       <span className="flex-1">{child.name}</span>

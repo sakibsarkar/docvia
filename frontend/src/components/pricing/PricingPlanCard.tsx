@@ -13,7 +13,7 @@ const PricingPlanCard = ({ plan }: { plan: IPlan }) => {
     "Priority support",
   ];
   return (
-    <div className="p-[0.5px 0.5px 0.5px 1px] z-3 rounded-[17px] border-1 border-[transparent] bg-[#72768a36] backdrop-blur-[35px]">
+    <div className="p-[0.5px 0.5px 0.5px 1px] z-3 rounded-[17px] border-1 border-[transparent] bg-backup backdrop-blur-[35px]">
       <div
         className={`primaryRadialGradient relative rounded-[18px] border transition-all duration-300 ${
           isPopular

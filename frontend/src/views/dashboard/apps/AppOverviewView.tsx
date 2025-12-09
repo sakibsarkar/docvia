@@ -1,11 +1,13 @@
 "use client";
 import { DeleteAppPopup, FormErrorMessage } from "@/components";
+import type React from "react";
+
 import AppOverviewSkeleton from "@/components/apps/appOverview/AppOverviewSkeleton";
 import AppSecret from "@/components/apps/appOverview/AppSecret";
 import { useGetAppByIdQuery, useUpdateAppByAppIdMutation } from "@/redux/features/apps/apps.api";
-import { IApp, IQueryMutationErrorResponse } from "@/types";
-import { Field, Form, Formik, FormikHelpers } from "formik";
-import { CheckCircle, CloudAlert } from "lucide-react";
+import type { IApp, IQueryMutationErrorResponse } from "@/types";
+import { Field, Form, Formik, type FormikHelpers } from "formik";
+import { CheckCircle, ShieldAlert as CloudAlert } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -13,7 +15,7 @@ import { toast } from "sonner";
 import * as yup from "yup";
 
 const ACCEPTED_TYPES: string[] = ["image/jpeg", "image/png"] as const;
-const MAX_BYTES = 5_00_000; // 0.5MB
+const MAX_BYTES = 5_00_000;
 
 type TFormValues = Pick<IApp, "appName" | "authorizedOrigin" | "isActive" | "description">;
 
@@ -26,8 +28,7 @@ const schema = yup.object({
       /^https:\/\/(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/,
       "Enter a valid root URL (e.g., https://example.com)"
     ),
-
-  isActive: yup.boolean().required(), // NEW
+  isActive: yup.boolean().required(),
   description: yup.string().max(200, "Description can't be longer than 200 characters").optional(),
 });
 
@@ -36,11 +37,8 @@ const AppOverviewView = () => {
   const appId = params?.appId as string;
 
   const [updateApp, { isLoading: isUpdating }] = useUpdateAppByAppIdMutation();
-
   const { data, isLoading } = useGetAppByIdQuery(appId);
-
   const [openPopup, setOpenPopup] = useState(false);
-
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   const handleUpate = async (values: TFormValues, { resetForm }: FormikHelpers<TFormValues>) => {
@@ -57,6 +55,7 @@ const AppOverviewView = () => {
 
     toast.success("App updated successfully!");
   };
+
   const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -80,6 +79,7 @@ const AppOverviewView = () => {
 
     setAvatarFile(file);
   };
+
   const appData = data?.data;
   const initialValues: TFormValues = {
     appName: appData?.appName || "",
@@ -101,16 +101,18 @@ const AppOverviewView = () => {
           const descriptionHasError = touched.description && !!errors.description;
 
           return (
-            <Form className="rounded-md border border-gray-100 bg-white p-5 shadow md:p-6">
+            <Form className="bg-glow-blue rounded-md border border-border bg-card/50 p-5 shadow-lg backdrop-blur-sm md:p-6">
               <div className="flex flex-col gap-6 md:flex-row md:gap-8">
                 {/* Left */}
                 <div className="flex flex-col gap-6 md:w-1/2">
                   {/* App name */}
                   <div>
-                    <label htmlFor="name" className="block text-[13px] font-semibold text-gray-900">
+                    <label htmlFor="name" className="block text-[13px] font-semibold text-white">
                       App Name
                     </label>
-                    <p className="mt-1 text-xs text-gray-500">This is your app’s visible name.</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      This is your app&apos;s visible name.
+                    </p>
 
                     <Field
                       id="appName"
@@ -120,8 +122,10 @@ const AppOverviewView = () => {
                       placeholder="My Custom App"
                       aria-invalid={nameHasError}
                       aria-describedby={nameHasError ? "name-error" : undefined}
-                      className={`mt-3 w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                        nameHasError ? "border-red-400 focus:ring-0" : "border-gray-300"
+                      className={`mt-3 w-full rounded-md border bg-input/50 px-3 py-2 text-sm text-foreground transition-all outline-none placeholder:text-muted-foreground focus:border-primary/50 focus:ring-2 focus:ring-primary/50 ${
+                        nameHasError
+                          ? "border-destructive focus:ring-destructive/50"
+                          : "border-border hover:border-border/80"
                       }`}
                     />
 
@@ -134,46 +138,43 @@ const AppOverviewView = () => {
 
                   {/* Status */}
                   <div>
-                    <span className="block text-[13px] font-semibold text-gray-900">Status</span>
+                    <span className="block text-[13px] font-semibold text-white">Status</span>
 
-                    <div className="mt-2 flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-3 py-2.5">
-                      {/* Left text mirrors current state */}
+                    <div className="mt-2 flex items-center justify-between rounded-md border border-border bg-muted/20 px-3 py-2.5">
                       <span
-                        className={`text-sm ${values.isActive ? "text-gray-700" : "text-gray-500"}`}
+                        className={`text-sm ${values.isActive ? "text-foreground" : "text-muted-foreground"}`}
                       >
                         {values.isActive ? "Active" : "Inactive"}
                       </span>
 
-                      {/* Switch (accessible, keyboard-friendly) */}
                       <label className="inline-flex items-center">
                         <Field
                           id="isActive"
                           name="isActive"
                           type="checkbox"
-                          // accessibility
                           role="switch"
                           aria-checked={values.isActive}
-                          // hide the native checkbox but keep it focusable
                           className="peer sr-only"
                           disabled={isUpdating}
                         />
                         <span
-                          className={`relative inline-block h-5 w-9 rounded-full transition-colors ${values.isActive ? "bg-green-500" : "bg-gray-300"} cursor-pointer peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-blue-500 after:absolute after:top-0.5 after:left-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform ${values.isActive ? "after:translate-x-4" : "after:translate-x-0"} `}
+                          className={`relative inline-block h-5 w-9 rounded-full transition-colors ${values.isActive ? "bg-primary" : "bg-muted"} cursor-pointer peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-primary after:absolute after:top-0.5 after:left-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform ${values.isActive ? "after:translate-x-4" : "after:translate-x-0"} `}
                           aria-hidden="true"
                         />
                       </label>
                     </div>
                   </div>
+
                   {/* Website URL */}
                   <div>
                     <label
                       htmlFor="authorizedOrigin"
-                      className="block text-[13px] font-semibold text-gray-900"
+                      className="block text-[13px] font-semibold text-white"
                     >
                       Website URL
                     </label>
-                    <p className="mt-1 text-xs text-gray-500">
-                      The site where you’ll embed the chat widget.
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      The site where you&apos;ll embed the chat widget.
                     </p>
 
                     <Field
@@ -184,8 +185,10 @@ const AppOverviewView = () => {
                       autoComplete="off"
                       aria-invalid={domainHasError}
                       aria-describedby={domainHasError ? "domain-error" : undefined}
-                      className={`mt-3 w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                        domainHasError ? "border-red-400 focus:ring-0" : "border-gray-300"
+                      className={`mt-3 w-full rounded-md border bg-input/50 px-3 py-2 text-sm text-foreground transition-all outline-none placeholder:text-muted-foreground focus:border-primary/50 focus:ring-2 focus:ring-primary/50 ${
+                        domainHasError
+                          ? "border-destructive focus:ring-destructive/50"
+                          : "border-border hover:border-border/80"
                       }`}
                     />
 
@@ -200,7 +203,7 @@ const AppOverviewView = () => {
                   <div>
                     <label
                       htmlFor="description"
-                      className="block text-[13px] font-semibold text-gray-900"
+                      className="block text-[13px] font-semibold text-white"
                     >
                       Description
                     </label>
@@ -210,12 +213,14 @@ const AppOverviewView = () => {
                         id="description"
                         name="description"
                         placeholder="My app description..."
-                        className={`mt-1 min-h-[100px] w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                          descriptionHasError ? "border-red-400 focus:ring-0" : "border-gray-300"
+                        className={`mt-1 min-h-[100px] w-full rounded-md border bg-input/50 px-3 py-2 text-sm text-foreground transition-all outline-none placeholder:text-muted-foreground focus:border-primary/50 focus:ring-2 focus:ring-primary/50 ${
+                          descriptionHasError
+                            ? "border-destructive focus:ring-destructive/50"
+                            : "border-border hover:border-border/80"
                         }`}
                         defaultValue={""}
                       />
-                      <span className="text-[12px] text-gray-500">
+                      <span className="text-[12px] text-muted-foreground">
                         {values.description?.length || 0} / 200
                       </span>
                       {descriptionHasError && (
@@ -238,7 +243,7 @@ const AppOverviewView = () => {
                           ? URL.createObjectURL(avatarFile)
                           : `https://ui-avatars.com/api/?name=${data?.data?.appName}&size=128`
                       }
-                      className="size-24 flex-none rounded-lg border border-gray-200 object-cover"
+                      className="size-24 flex-none rounded-lg border border-border object-cover"
                       width={96}
                       height={96}
                     />
@@ -253,12 +258,12 @@ const AppOverviewView = () => {
                       />
                       <label
                         htmlFor="avatarInput"
-                        className="inline-flex cursor-pointer rounded border border-gray-300 px-3 py-2 text-[13px] font-medium text-gray-500 hover:bg-gray-50"
+                        className="inline-flex cursor-pointer rounded border border-border bg-muted/20 px-3 py-2 text-[13px] font-medium text-foreground transition-all hover:border-primary/50 hover:bg-muted/40"
                       >
                         Change Image
                       </label>
 
-                      <p className="mt-1 text-xs/5 text-gray-400">JPG or PNG. Max 500KB.</p>
+                      <p className="mt-1 text-xs/5 text-muted-foreground">JPG or PNG. Max 500KB.</p>
                     </div>
                   </div>
 
@@ -270,21 +275,21 @@ const AppOverviewView = () => {
               {/* Save / feedback */}
               <div className="mt-6 flex flex-col items-start justify-start gap-3">
                 {status?.saved && (
-                  <span className="inline-flex items-center gap-1 text-sm text-green-700">
+                  <span className="inline-flex items-center gap-1 text-sm text-green-500">
                     <CheckCircle className="h-4 w-4" />
                     Saved
                   </span>
                 )}
                 {status?.error && (
-                  <span className="inline-flex items-center gap-1 text-sm text-red-700">
+                  <span className="inline-flex items-center gap-1 text-sm text-destructive">
                     <CloudAlert className="h-4 w-4" />
                     {status.error}
                   </span>
-                )}{" "}
+                )}
                 <button
                   type="submit"
                   disabled={isUpdating}
-                  className="inline-flex w-full items-center justify-center rounded-md bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-60"
+                  className="inline-flex w-full items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-60"
                 >
                   {isUpdating ? "Saving..." : "Save"}
                 </button>
@@ -295,10 +300,10 @@ const AppOverviewView = () => {
       </Formik>
 
       {/* Delete */}
-      <div className="mt-6 flex justify-between rounded-md border border-gray-200 bg-white p-5 md:p-6">
+      <div className="bg-glow-purple mt-6 flex flex-col gap-4 rounded-md border border-border bg-card/50 p-5 backdrop-blur-sm md:flex-row md:justify-between md:p-6">
         <div>
-          <h4 className="mb-1 text-[16px] font-semibold text-gray-900">Delete App</h4>
-          <p className="mb-2 text-[12px] text-gray-600">
+          <h4 className="mb-1 text-[16px] font-semibold text-white">Delete App</h4>
+          <p className="mb-2 text-[12px] text-muted-foreground">
             Permanently delete the app and all its data. This action is irreversible—proceed with
             caution.
           </p>
@@ -306,7 +311,7 @@ const AppOverviewView = () => {
         <button
           onClick={() => setOpenPopup(true)}
           type="button"
-          className="rounded-md bg-red-600 px-5 py-2 text-sm font-medium text-white hover:bg-red-700"
+          className="rounded-md bg-destructive px-5 py-2 text-sm font-medium whitespace-nowrap text-destructive-foreground transition-all hover:bg-destructive/90"
         >
           Delete App Permanently
         </button>

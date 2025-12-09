@@ -7,6 +7,7 @@
   /* Minimal dark theme - mostly white text, subtle blue/purple accents */
   --background: #090909;
   --foreground: #e4e9f7;
+  --backup: #72768a36;
   --card: #0f0f0f;
   --card-foreground: #e4e9f7;
   --popover: #000000;
@@ -83,6 +84,7 @@
   --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-backup: var(--backup);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
