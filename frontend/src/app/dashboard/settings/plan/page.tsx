@@ -1,5 +1,7 @@
+import SubscriptionManageView from "@/views/dashboard/apps/SubscriptionManageView";
+
 const page = () => {
-  return <div></div>;
+  return <SubscriptionManageView />;
 };
 
 export default page;
