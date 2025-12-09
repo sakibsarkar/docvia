@@ -41,6 +41,8 @@ app.get("/", async (_req: Request, res: Response) => {
     customer: "cus_TZFYAh8yx8nx5C",
     return_url: "https://your-website.com/account", // where Stripe redirects after they close the portal
   });
+
+  // const stripeSub = await stripe.subscriptions.retrieve("sub_1ScKOJB8Zk6befohBDZb35Bf");
   sendResponse(res, {
     success: true,
     statusCode: 200,

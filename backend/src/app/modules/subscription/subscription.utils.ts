@@ -27,25 +27,7 @@ const isDurationOver = (payload: IProps): boolean => {
   return currentDate > adjustedExpirationDate;
 };
 
-const getUserCurrentSubscriptionId = async (userId: string) => {
-  const userInfo = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      currentSubscriptionId: true,
-      stripeCustomerId: true,
-    },
-  });
-
-  if (!userInfo) {
-    throw new AppError(400, "User not found");
-  }
-
-  if (userInfo.currentSubscriptionId) {
-    return userInfo.currentSubscriptionId;
-  }
-
+const createNewFreeTrial = async (userId: string, stripeCustomerId?: string) => {
   const plan = await prisma.plan.findUnique({
     where: {
       id: freePlanId,
@@ -57,9 +39,8 @@ const getUserCurrentSubscriptionId = async (userId: string) => {
   }
 
   const subscriptionId = v4();
-  const customerId =
-    userInfo.stripeCustomerId || (await userUtils.getUserCustomeridByUserId(userId));
-  await prisma.subscription.create({
+  const customerId = stripeCustomerId || (await userUtils.getUserCustomeridByUserId(userId));
+  const subscription = await prisma.subscription.create({
     data: {
       id: subscriptionId,
       status: "active",
@@ -80,19 +61,36 @@ const getUserCurrentSubscriptionId = async (userId: string) => {
     },
   });
 
-  if (userInfo?.currentSubscriptionId) {
-    await prisma.subscription.delete({
-      where: {
-        id: userInfo?.currentSubscriptionId,
-      },
-    });
+  return subscription;
+};
+
+const getUserCurrentSubscriptionId = async (userId: string) => {
+  const userInfo = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      currentSubscriptionId: true,
+      stripeCustomerId: true,
+    },
+  });
+
+  if (!userInfo) {
+    throw new AppError(400, "User not found");
   }
 
-  return subscriptionId;
+  if (userInfo.currentSubscriptionId) {
+    return userInfo.currentSubscriptionId;
+  }
+
+  const subscription = await createNewFreeTrial(userId, userInfo.stripeCustomerId || undefined);
+
+  return subscription.id;
 };
 
 const subscriptionUtils = {
   getUserCurrentSubscriptionId,
   isDurationOver,
+  createNewFreeTrial,
 };
 export default subscriptionUtils;

@@ -8,6 +8,11 @@ router.post(
   authMiddleware.isAuthenticateUser(),
   subscriptionController.createSubscription
 );
+router.get(
+  "/get-details",
+  authMiddleware.isAuthenticateUser(),
+  subscriptionController.getUsersCurrentSubscriptionDetails
+);
 
 // hit by stripe checkout session redirect
 // @on payment success

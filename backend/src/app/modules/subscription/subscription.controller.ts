@@ -26,10 +26,21 @@ const subscriptionPaymentCancel = catchAsyncError(async (req, res) => {
   res.send(file);
 });
 
+const getUsersCurrentSubscriptionDetails = catchAsyncError(async (req, res) => {
+  const user = req.user!;
+  const result = await subscriptionService.getUsersCurrentSubscriptionDetails(user.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: result,
+    message: "Subscription details fetched successfully",
+  });
+});
 const subscriptionController = {
   createSubscription,
   subscriptionPaymentConfirm,
   subscriptionPaymentCancel,
+  getUsersCurrentSubscriptionDetails,
 };
 
 export default subscriptionController;
