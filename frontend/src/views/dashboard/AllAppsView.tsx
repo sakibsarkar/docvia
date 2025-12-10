@@ -24,7 +24,7 @@ const AllAppsView = () => {
     searchTerm: search,
   });
   return (
-    <section className="h-full w-full">
+    <section className="w-full">
       {/* Header */}
       <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <h1 className="flex items-center gap-2 font-poppins text-[22px] font-medium text-foreground">

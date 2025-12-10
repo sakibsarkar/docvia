@@ -201,7 +201,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <>
-      <div className="h-[100dvh]">
+      <div className="flex h-[100dvh] items-start justify-start">
         {/* Mobile sidebar */}
         <div
           className={twMerge(
@@ -234,7 +234,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Desktop sidebar */}
-        <div className="hidden border-r border-sidebar-border lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div className="hidden h-full w-fit shrink-0 border-r border-sidebar-border lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-sidebar px-6 py-4">
             <div className="flex h-16 shrink-0 items-center">
               <img
@@ -318,7 +318,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Main content */}
-        <main className="smoothBar h-full overflow-auto bg-gradient-to-b from-background to-primary/10 px-4 py-6 backdrop-blur-xl sm:px-6 lg:ml-72 lg:px-8">
+        <main className="smoothBar h-full w-full overflow-auto bg-gradient-to-b from-background to-primary/10 px-4 py-6 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="mb-6 flex items-center gap-4 lg:hidden">
             <button
               onClick={() => setSidebarOpen(true)}

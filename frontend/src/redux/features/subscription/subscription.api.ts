@@ -16,6 +16,16 @@ const subscriptionApi = api.injectEndpoints({
       query: () => ({ url: "/subscription/plans", method: "GET" }),
       providesTags: ["subscription"],
     }),
+    createSubscription: builder.mutation<{ data: { url: string } }, string>({
+      query: (planId) => ({
+        url: "/subscription/create",
+        method: "POST",
+        body: {
+          planId,
+        },
+      }),
+      invalidatesTags: ["subscription"],
+    }),
   }),
 });
 
@@ -23,4 +33,6 @@ export const {
   useGetCurrentSubscriptionDetailsQuery,
   useGetSubscriptionManagingPortalUrlQuery,
   useLazyGetSubscriptionManagingPortalUrlQuery,
+  useGetAllActivePlansQuery,
+  useCreateSubscriptionMutation,
 } = subscriptionApi;

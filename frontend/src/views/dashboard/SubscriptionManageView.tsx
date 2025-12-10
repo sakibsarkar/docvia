@@ -2,6 +2,7 @@
 
 import ManageSubscription from "@/components/dashboard/subscriptionManage/ManageSubscription";
 import SubscriptionManageViewSkeleton from "@/components/dashboard/subscriptionManage/SubscriptionManageViewSkeleton";
+import ChoosePricingPlans from "@/components/pricing/ChoosePricingPlans";
 import { useGetCurrentSubscriptionDetailsQuery } from "@/redux/features/subscription/subscription.api";
 import dateUtils from "@/utils/date";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
@@ -135,7 +136,7 @@ const SubscriptionManageView = () => {
                 )}
               </div>
             </div>
-            <ManageSubscription />
+            {isFreePlan ? <ChoosePricingPlans /> : <ManageSubscription />}
           </div>
         </div>
 

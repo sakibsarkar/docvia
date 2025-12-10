@@ -107,7 +107,10 @@ const AppOverviewView = () => {
                 <div className="flex flex-col gap-6 md:w-1/2">
                   {/* App name */}
                   <div>
-                    <label htmlFor="name" className="block text-[13px] font-semibold text-foreground">
+                    <label
+                      htmlFor="name"
+                      className="block text-[13px] font-semibold text-foreground"
+                    >
                       App Name
                     </label>
                     <p className="mt-1 text-xs text-muted-foreground">

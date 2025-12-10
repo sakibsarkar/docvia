@@ -1,5 +1,6 @@
 import { api } from "@/redux/api/api";
 import { IApp, IMeta } from "@/types";
+import { IAppWidget } from "@/types/appWidget";
 import { generateQueryParams } from "@/utils/params";
 
 const appsApi = api.injectEndpoints({
@@ -71,6 +72,24 @@ const appsApi = api.injectEndpoints({
       }),
       invalidatesTags: ["apps"],
     }),
+    getAppWidgetByAppId: builder.query<{ data: IAppWidget }, string>({
+      query: (appId) => ({
+        url: `/app/widget/${appId}`,
+        method: "GET",
+      }),
+      providesTags: ["appWidget"],
+    }),
+    updateAppWidgetByWidgetId: builder.mutation<
+      { data: IAppWidget },
+      { widgetId: string; payload: Partial<IAppWidget> }
+    >({
+      query: ({ widgetId, payload }) => ({
+        url: `/app/widget/${widgetId}`,
+        method: "PATCH",
+        body: payload,
+      }),
+      invalidatesTags: ["appWidget"],
+    }),
   }),
 });
 
@@ -83,4 +102,6 @@ export const {
   useUpdateAppByAppIdMutation,
   useGetAppSecretKeyByAppIdQuery,
   useLazyGetAppSecretKeyByAppIdQuery,
+  useGetAppWidgetByAppIdQuery,
+  useUpdateAppWidgetByWidgetIdMutation,
 } = appsApi;

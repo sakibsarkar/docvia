@@ -101,7 +101,7 @@ export default function AppDetailsLayout({
   return (
     <div className="flex gap-4">
       {/* Sidebar */}
-      <aside className="fixed inset-y-0 top-10 lg:z-50 lg:flex lg:w-66 lg:flex-col">
+      <aside className="inset-y-0 top-10 shrink-0 lg:z-50 lg:flex lg:w-66 lg:flex-col">
         <div className="bg-glow-blue flex grow flex-col gap-y-5 overflow-y-auto bg-sidebar px-2 py-2">
           <div className="flex items-center justify-between pr-1">
             <h4 className="font-poppins text-lg font-medium text-sidebar-foreground">
@@ -125,11 +125,11 @@ export default function AppDetailsLayout({
       </aside>
 
       {/* Main */}
-      <div className="ml-66 w-full px-4">
-        <div className="sticky top-0 z-30 -mt-6 border-b border-border bg-background/80 px-4 pt-8 pb-6 font-poppins text-[16px] font-medium text-foreground backdrop-blur-md">
+      <div className="w-full px-4">
+        <div className="z-30 border-b border-border bg-background/80 px-4 pt-8 pb-6 font-poppins text-[16px] font-medium text-foreground backdrop-blur-md">
           {pageTitle}
         </div>
-        <div className="z-10 px-2">{children}</div>
+        <div className="z-10 mt-3">{children}</div>
       </div>
     </div>
   );

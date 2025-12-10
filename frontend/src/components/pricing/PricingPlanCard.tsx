@@ -1,8 +1,8 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { IPlan } from "@/types/plan";
 import { Check } from "lucide-react";
-
-const PricingPlanCard = ({ plan }: { plan: IPlan }) => {
+const PricingPlanCard = ({ plan, onSelect }: { plan: IPlan; onSelect?: (plan: IPlan) => void }) => {
   const { name, price, appLimit, customization, trialPeriodDays } = plan;
   const isPopular = name.toLowerCase().includes("premium");
   const features = [
@@ -31,14 +31,18 @@ const PricingPlanCard = ({ plan }: { plan: IPlan }) => {
 
         <div className="p-8">
           {/* Header */}
-          <h3 className="mb-2 text-2xl font-bold">{name}</h3>
+          <h3 className="mb-2 text-2xl font-bold text-foreground">{name}</h3>
           <div className="mb-6">
-            <span className="text-4xl font-bold">${price}</span>
+            <span className="text-4xl font-bold text-foreground">${price}</span>
             <span className="ml-2 text-muted-foreground">/month</span>
           </div>
 
           {/* CTA Button */}
-          <Button size="lg" className="mb-8 w-full" variant={isPopular ? "default" : "outline"}>
+          <Button
+            onClick={() => onSelect && onSelect(plan)}
+            size="lg"
+            className={`mb-8 w-full border ${isPopular ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground bg-transparent"}`}
+          >
             {price === 0 ? "Start Free" : "Get Started"}
           </Button>
 

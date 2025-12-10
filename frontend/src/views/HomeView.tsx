@@ -1,4 +1,3 @@
-import { Footer, Header } from "@/components";
 import CodeSnippet from "@/components/home/CodeSnippet";
 import CTA from "@/components/home/CTA";
 import FAQ from "@/components/home/FAQ";
@@ -12,7 +11,6 @@ import PricingSection from "@/components/pricing/PricingSection";
 const HomeView = () => {
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <Header />
       <Hero />
       <Integration />
       <Features />
@@ -22,7 +20,6 @@ const HomeView = () => {
       <PricingSection />
       <FAQ />
       <CTA />
-      <Footer />
     </main>
   );
 };
