@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import * as yup from "yup";
-import { Formik, Form } from "formik";
-import { useAppSelector } from "@/hooks";
 import { FormErrorMessage, InputClass } from "@/components";
+import { useAppSelector } from "@/hooks";
+import { Form, Formik } from "formik";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+import * as yup from "yup";
+import { Input } from "../ui/input";
 
 const personalInfoFormSchema = yup.object({
   firstName: yup.string().required("First name is required"),
@@ -59,7 +60,7 @@ export default function PersonalInfoForm() {
     >
       {({ values, errors, touched, isSubmitting, setFieldValue }) => (
         <Form className="md:col-span-2">
-          <div className="flex flex-col gap-4 rounded-md border border-gray-200 bg-white p-6 shadow-md">
+          <div className="flex flex-col gap-4 rounded-md border border-border bg-card p-6 shadow-md">
             {/* Avatar */}
             <div className="flex items-center gap-x-4">
               <Image
@@ -90,7 +91,7 @@ export default function PersonalInfoForm() {
                 />
                 <label
                   htmlFor="avatarInput"
-                  className="inline-flex cursor-pointer rounded border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50"
+                  className="inline-flex cursor-pointer rounded border border-border bg-input/40 px-3 py-2 text-sm font-medium text-foreground hover:bg-card"
                 >
                   Change Profile
                 </label>
@@ -105,8 +106,10 @@ export default function PersonalInfoForm() {
             {/* Name fields */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="firstName">Your First Name</label>
-                <input
+                <label htmlFor="firstName" className="text-foreground">
+                  Your First Name
+                </label>
+                <Input
                   id="firstName"
                   name="firstName"
                   placeholder="First name"
@@ -123,8 +126,10 @@ export default function PersonalInfoForm() {
               </div>
 
               <div>
-                <label htmlFor="lastName">Your Last Name</label>
-                <input
+                <label htmlFor="lastName" className="text-foreground">
+                  Your Last Name
+                </label>
+                <Input
                   id="lastName"
                   name="lastName"
                   placeholder="Last name"
@@ -144,13 +149,15 @@ export default function PersonalInfoForm() {
             {/* Email (read-only / non-editable) */}
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label htmlFor="email">Email address</label>
-                <input
+                <label htmlFor="email" className="text-foreground">
+                  Email address
+                </label>
+                <Input
                   id="email"
                   name="email"
                   type="email"
                   placeholder="you@example.com"
-                  className={`${InputClass(!!(touched.email && errors.email))} !bg-gray-100`}
+                  className={`${InputClass(!!(touched.email && errors.email))}`}
                   value={values.email}
                   readOnly
                   disabled

@@ -25,7 +25,7 @@ const steps = [
 const HowItWorks = () => {
   return (
     <section className="relative border-t border-border/40 py-20 md:py-32">
-      <div className="relative container mx-auto px-4 md:px-6 lg:px-8">
+      <div className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8">
         <h2 className="mb-16 text-center text-4xl font-bold text-balance md:text-5xl">
           How it works
         </h2>
@@ -43,7 +43,7 @@ const HowItWorks = () => {
         alt="hero"
         width={1000}
         height={1000}
-        className="absolute top-0 left-0 max-w-[1000px] object-contain"
+        className="absolute top-0 left-0 z-[1] max-w-[1000px] object-contain"
       />{" "}
     </section>
   );

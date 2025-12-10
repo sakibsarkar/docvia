@@ -5,6 +5,7 @@ import { Form, Formik } from "formik";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import * as yup from "yup";
+import { Input } from "../ui/input";
 
 const passwordSchema = yup
   .string()
@@ -57,15 +58,16 @@ export default function ChangePasswordForm() {
     <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
       {({ values, errors, isSubmitting, handleChange, handleBlur, resetForm, touched }) => (
         <Form className="lg:col-span-2">
-          <div className="flex flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 shadow-md md:p-6">
+          <div className="flex flex-col gap-4 rounded-md border border-border bg-card p-4 shadow-md md:p-6">
             {/* Current password */}
             <div>
-              <label htmlFor="current-password" className="label">
+              <label htmlFor="current-password" className="text-foreground">
                 Current Password
               </label>
               <div className="relative">
-                <input
+                <Input
                   id="current-password"
+                  placeholder="*******"
                   name="currentPassword"
                   type={showCurrent ? "text" : "password"}
                   autoComplete="current-password"
@@ -91,14 +93,15 @@ export default function ChangePasswordForm() {
 
             {/* New password */}
             <div>
-              <label htmlFor="new-password" className="label">
+              <label htmlFor="new-password" className="text-foreground">
                 New Password
               </label>
               <div className="relative">
-                <input
+                <Input
                   id="new-password"
                   name="newPassword"
                   type={showNew ? "text" : "password"}
+                  placeholder="*******"
                   autoComplete="new-password"
                   value={values.newPassword}
                   onChange={handleChange}
@@ -142,13 +145,14 @@ export default function ChangePasswordForm() {
 
             {/* Confirm password */}
             <div>
-              <label htmlFor="confirm-password" className="label">
+              <label htmlFor="confirm-password" className="text-foreground">
                 Confirm Password
               </label>
               <div className="relative">
-                <input
+                <Input
                   id="confirm-password"
                   name="confirmPassword"
+                  placeholder="*******"
                   type={showConfirm ? "text" : "password"}
                   autoComplete="new-password"
                   value={values.confirmPassword}

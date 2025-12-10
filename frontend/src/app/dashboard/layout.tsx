@@ -318,7 +318,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Main content */}
-        <main className="min-h-[calc(100%-32px)] overflow-auto bg-gradient-to-b from-background to-primary/10 px-4 py-6 backdrop-blur-xl sm:px-6 lg:ml-72 lg:px-8">
+        <main className="smoothBar h-full overflow-auto bg-gradient-to-b from-background to-primary/10 px-4 py-6 backdrop-blur-xl sm:px-6 lg:ml-72 lg:px-8">
           <div className="mb-6 flex items-center gap-4 lg:hidden">
             <button
               onClick={() => setSidebarOpen(true)}

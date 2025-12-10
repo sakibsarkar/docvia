@@ -107,7 +107,7 @@ const AppOverviewView = () => {
                 <div className="flex flex-col gap-6 md:w-1/2">
                   {/* App name */}
                   <div>
-                    <label htmlFor="name" className="block text-[13px] font-semibold text-white">
+                    <label htmlFor="name" className="block text-[13px] font-semibold text-foreground">
                       App Name
                     </label>
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -138,7 +138,7 @@ const AppOverviewView = () => {
 
                   {/* Status */}
                   <div>
-                    <span className="block text-[13px] font-semibold text-white">Status</span>
+                    <span className="block text-[13px] font-semibold text-foreground">Status</span>
 
                     <div className="mt-2 flex items-center justify-between rounded-md border border-border bg-muted/20 px-3 py-2.5">
                       <span
@@ -169,7 +169,7 @@ const AppOverviewView = () => {
                   <div>
                     <label
                       htmlFor="authorizedOrigin"
-                      className="block text-[13px] font-semibold text-white"
+                      className="block text-[13px] font-semibold text-foreground"
                     >
                       Website URL
                     </label>
@@ -203,7 +203,7 @@ const AppOverviewView = () => {
                   <div>
                     <label
                       htmlFor="description"
-                      className="block text-[13px] font-semibold text-white"
+                      className="block text-[13px] font-semibold text-foreground"
                     >
                       Description
                     </label>
@@ -302,7 +302,7 @@ const AppOverviewView = () => {
       {/* Delete */}
       <div className="bg-glow-purple mt-6 flex flex-col gap-4 rounded-md border border-border bg-card/50 p-5 backdrop-blur-sm md:flex-row md:justify-between md:p-6">
         <div>
-          <h4 className="mb-1 text-[16px] font-semibold text-white">Delete App</h4>
+          <h4 className="mb-1 text-[16px] font-semibold text-foreground">Delete App</h4>
           <p className="mb-2 text-[12px] text-muted-foreground">
             Permanently delete the app and all its data. This action is irreversible—proceed with
             caution.
