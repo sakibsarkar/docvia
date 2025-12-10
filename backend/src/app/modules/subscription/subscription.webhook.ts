@@ -44,22 +44,95 @@ const handleCheckoutSessionSuccess = async (session: Stripe.Checkout.Session) =>
 };
 
 const handleSubscriptionUpdate = async (session: Stripe.Subscription) => {
+  const isActive = session.status === "active";
+
+  if (!isActive) {
+    return { status: 201, message: "Invalid session. Subscription not active" };
+  }
+
+  const priceId = session.items.data[0].price.id;
+  const userId = session.metadata?.userId;
+  const customerId = typeof session.customer === "string" ? session.customer : session.customer.id;
+
+  const updatedPlan = await prisma.plan.findFirst({
+    where: {
+      stripePriceId: priceId,
+    },
+    select: {
+      id: true,
+      price: true,
+    },
+  });
+
+  if (!updatedPlan) {
+    return { status: 400, message: "Plan not found" };
+  }
+
+  const userFindQuery: { id?: string; stripeCustomerId?: string } = {};
+
+  if (userId) {
+    userFindQuery["id"] = userId;
+  } else if (customerId) {
+    userFindQuery["stripeCustomerId"] = customerId;
+  }
+
+  let currentSubId: string | null = null;
+  if (Object.entries(userFindQuery).length) {
+    const subscription = await prisma.subscription.create({
+      data: {
+        price: updatedPlan.price,
+        startDate: new Date(),
+        status: "active",
+        stripeCustomerId: customerId,
+        stripeSubscriptionId: session.id,
+        planId: updatedPlan.id,
+        userId: userId,
+      },
+    });
+
+    const user = await prisma.user.findFirst({
+      where: userFindQuery,
+      select: {
+        currentSubscriptionId: true,
+        id: true,
+      },
+    });
+    if (user) {
+      currentSubId = user.currentSubscriptionId;
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          currentSubscriptionId: subscription.id,
+        },
+      });
+    }
+  }
+
+  if (currentSubId) {
+    const isSubExisting = await prisma.subscription.findUnique({
+      where: { id: currentSubId },
+      select: { id: true },
+    });
+    if (isSubExisting) {
+      await prisma.subscription.update({
+        where: { id: currentSubId },
+        data: {
+          status: "canceled",
+        },
+      });
+    }
+  }
+
   return { status: 200, message: "Subscription updated" };
 };
 const handleSubscriptionCanceled = async (session: Stripe.Subscription) => {
   const isCanceled = session.status === "canceled";
-  const internalSubId = session.metadata?.internalSubId;
-  const customerId = session.customer;
-  if (!internalSubId) {
-    return { status: 400, message: "Metadata missing in subscription" };
-  }
+  const userId = session.metadata?.userId;
+  const customerId = typeof session.customer === "string" ? session.customer : session.customer.id;
+
   if (!isCanceled) {
     return { status: 201, message: "Invalid session. Subscription not canceled" };
   }
-
-  await prisma.subscription.delete({
-    where: { id: internalSubId },
-  });
 
   let previousTrialPlan = await prisma.subscription.findFirst({
     where: { userId: session.metadata?.userId, price: 0 },
@@ -86,7 +159,7 @@ const handleSubscriptionCanceled = async (session: Stripe.Subscription) => {
         id: subscriptionId,
         status: "active",
         userId: session.metadata?.userId,
-        stripeCustomerId: typeof customerId === "string" ? customerId : customerId.id,
+        stripeCustomerId: customerId,
         planId: freePlanId,
         price: 0,
         startDate: new Date(),
@@ -139,16 +212,47 @@ const handleSubscriptionCanceled = async (session: Stripe.Subscription) => {
       });
     }
   }
+  const userFindQuery: { id?: string; stripeCustomerId?: string } = {};
+  let currentSubId: string | null = null;
 
-  await prisma.user.update({
-    where: {
-      id: session.metadata?.userId,
-    },
-    data: {
-      currentSubscriptionId: previousTrialPlan.id,
+  if (userId) {
+    userFindQuery["id"] = userId;
+  } else if (customerId) {
+    userFindQuery["stripeCustomerId"] = customerId;
+  }
+
+  const user = await prisma.user.findFirst({
+    where: userFindQuery,
+    select: {
+      currentSubscriptionId: true,
+      id: true,
     },
   });
-
+  if (user) {
+    currentSubId = user.currentSubscriptionId;
+    await prisma.user.update({
+      where: {
+        id: session.metadata?.userId,
+      },
+      data: {
+        currentSubscriptionId: previousTrialPlan.id,
+      },
+    });
+  }
+  if (currentSubId) {
+    const isSubExisting = await prisma.subscription.findUnique({
+      where: { id: currentSubId },
+      select: { id: true },
+    });
+    if (isSubExisting) {
+      await prisma.subscription.update({
+        where: { id: currentSubId },
+        data: {
+          status: "canceled",
+        },
+      });
+    }
+  }
   return { status: 200, message: "Subscription Canceled" };
 };
 
@@ -172,12 +276,12 @@ const mainHook = async (req: Request, res: Response) => {
     return res.status(status).send(message);
   } else if (event.type === "customer.subscription.updated") {
     const subscription = event.data.object;
-    const { message, status } = await handleSubscriptionUpdate(subscription, "update");
+    const { message, status } = await handleSubscriptionUpdate(subscription);
 
     return res.status(status).send(message);
   } else if (event.type === "customer.subscription.deleted") {
     const subscription = event.data.object;
-    const { message, status } = await handleSubscriptionCanceled(subscription, "cancel");
+    const { message, status } = await handleSubscriptionCanceled(subscription);
 
     return res.status(status).send(message);
   }

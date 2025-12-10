@@ -9,7 +9,9 @@ const createSubscription = catchAsyncError(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    data: session.url,
+    data: {
+      url: session.url,
+    },
     message: "Checkout session link",
   });
 });

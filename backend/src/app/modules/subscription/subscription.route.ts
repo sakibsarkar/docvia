@@ -13,7 +13,11 @@ router.get(
   authMiddleware.isAuthenticateUser(),
   subscriptionController.getUsersCurrentSubscriptionDetails
 );
-router.get("/portal-url", subscriptionController.getSubscriptionManagePortalUrl);
+router.get(
+  "/portal-url",
+  authMiddleware.isAuthenticateUser(),
+  subscriptionController.getSubscriptionManagePortalUrl
+);
 router.get("/plans", subscriptionController.getAllActivePlans);
 
 // hit by stripe checkout session redirect
