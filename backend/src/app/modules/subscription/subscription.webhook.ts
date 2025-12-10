@@ -256,6 +256,69 @@ const handleSubscriptionCanceled = async (session: Stripe.Subscription) => {
   return { status: 200, message: "Subscription Canceled" };
 };
 
+const updateSubscriptionStatusFromInvoice = async (
+  invoice: Stripe.Invoice,
+  newStatus: "active" | "past_due"
+) => {
+  const status = invoice.status === "paid";
+  if (status) {
+    return { status: 400, message: "Invoice already paid" };
+  }
+  const customerId = typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
+
+  const invoiceSubscription: Stripe.Subscription | string =
+    // @ts-expect-error invoice mayhave subscription
+    invoice.lines.data[0]?.subscription || invoice.subscription;
+
+  const subscriptionId =
+    typeof invoiceSubscription === "string" ? invoiceSubscription : invoiceSubscription?.id;
+
+  if (subscriptionId) {
+    const subscription = await prisma.subscription.findFirst({
+      where: { stripeSubscriptionId: subscriptionId },
+    });
+    if (subscription) {
+      await prisma.subscription.update({
+        where: { id: subscription.id },
+        data: {
+          status: newStatus,
+        },
+      });
+    }
+    return { status: 200, message: "Subscription marked as due" };
+  } else if (customerId) {
+    const user = await prisma.user.findFirst({
+      where: { stripeCustomerId: customerId },
+      select: {
+        id: true,
+        currentSubscriptionId: true,
+      },
+    });
+
+    if (user) {
+      const subscription = await prisma.subscription.findFirst({
+        where: { id: user.currentSubscriptionId },
+        select: {
+          id: true,
+        },
+      });
+      if (subscription) {
+        await prisma.subscription.update({
+          where: { id: subscription.id },
+          data: {
+            status: newStatus,
+          },
+        });
+      }
+    } else {
+      return { status: 200, message: "Subscription marked as due" };
+    }
+    return { status: 200, message: "Subscription marked as due" };
+  } else {
+    return { status: 400, message: "Invoice has no subscription" };
+  }
+};
+
 const mainHook = async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"] as string;
 
@@ -263,30 +326,45 @@ const mainHook = async (req: Request, res: Response) => {
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, config.STRIPE_WEBHOOK_SECRET!);
+
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object;
+        const { message, status } = await handleCheckoutSessionSuccess(session);
+        return res.status(status).send(message);
+      }
+
+      case "customer.subscription.updated": {
+        const subscription = event.data.object;
+        const { message, status } = await handleSubscriptionUpdate(subscription);
+        return res.status(status).send(message);
+      }
+
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object;
+        const { message, status } = await handleSubscriptionCanceled(subscription);
+        return res.status(status).send(message);
+      }
+
+      case "invoice.payment_failed": {
+        const invoice = event.data.object;
+        const { message, status } = await updateSubscriptionStatusFromInvoice(invoice, "past_due");
+        return res.status(status).send(message);
+      }
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object;
+        const { message, status } = await updateSubscriptionStatusFromInvoice(invoice, "past_due");
+        return res.status(status).send(message);
+      }
+
+      default:
+        return res.status(400).send("Unhandled event type");
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("❌ Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    const { message, status } = await handleCheckoutSessionSuccess(session);
-
-    return res.status(status).send(message);
-  } else if (event.type === "customer.subscription.updated") {
-    const subscription = event.data.object;
-    const { message, status } = await handleSubscriptionUpdate(subscription);
-
-    return res.status(status).send(message);
-  } else if (event.type === "customer.subscription.deleted") {
-    const subscription = event.data.object;
-    const { message, status } = await handleSubscriptionCanceled(subscription);
-
-    return res.status(status).send(message);
-  }
-
-  return res.status(200).send("Webhook received");
 };
 
 const subscriptionWebhook = {
