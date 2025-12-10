@@ -78,6 +78,30 @@ model App {
   user             User     @relation(fields: [userId], references: [id])
   createdAt        DateTime @default(now()) @db.Timestamptz(3)
   updatedAt        DateTime @updatedAt @db.Timestamptz(3)
+
+  // One-to-many relation
+  appWidgets AppWidget[]
+
+  // One-to-one relation for current widget
+  currentWidgetId String?    @unique // optional if app can start without a current widget
+  currentWidget   AppWidget? @relation("CurrentWidget", fields: [currentWidgetId], references: [id])
+}
+
+model AppWidget {
+  id                  String   @id @default(uuid())
+  agentName           String
+  agentPhoto          String?
+  headerColor         String
+  headerTextColor     String
+  agentMessageColor   String
+  agentTextColor      String
+  visitorMessageColor String
+  visitorTextColor    String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  appId               String
+  appInfo             App      @relation(fields: [appId], references: [id])
+  appAsCurrent        App?     @relation("CurrentWidget")
 }
 
 model GoogleAuthToken {

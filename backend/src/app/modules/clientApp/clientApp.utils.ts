@@ -1,3 +1,4 @@
+import { AppWidget } from "@prisma/client";
 import { createHash, randomBytes } from "crypto";
 import { v4 } from "uuid";
 
@@ -11,8 +12,20 @@ function generateAppApiKey() {
   return hashKey;
 }
 
+const defaultAppWidget: Omit<AppWidget, "id" | "createdAt" | "updatedAt" | "appId"> = {
+  agentName: "Agent",
+  agentPhoto: null,
+  headerColor: "#3b82f6",
+  headerTextColor: "#ffffff",
+  agentMessageColor: "#1f2937",
+  agentTextColor: "#ffffff",
+  visitorMessageColor: "#3b82f6",
+  visitorTextColor: "#ffffff",
+};
+
 const clientAppUtils = {
   generateAppApiKey,
+  defaultAppWidget,
 };
 
 export default clientAppUtils;

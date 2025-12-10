@@ -90,6 +90,34 @@ const myAppCount = catchAsyncError(async (req, res) => {
     message: "Apps fetched successfully",
   });
 });
+
+const getAppWidgetByAppId = catchAsyncError(async (req, res) => {
+  const userId = req.user!.id;
+  const appId = req.params.appId;
+  const result = await clientAppService.getAppWidgetByAppId(appId, userId);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: result,
+    message: "App widget fetched successfully",
+  });
+});
+
+const updateAppWidgetByWidgetId = catchAsyncError(async (req, res) => {
+  const userId = req.user!.id;
+  const widgetId = req.params.widgetId;
+  const payload = req.body;
+  const result = await clientAppService.updateAppWidgetByWidgetId(widgetId, userId, payload);
+  console.log("update");
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    data: result,
+    message: "App widget updated successfully",
+  });
+});
+
 const clientAppController = {
   creatApp,
   getUsersAllApps,
@@ -98,6 +126,8 @@ const clientAppController = {
   UpdateAppByAppId,
   deleteAppByAppId,
   myAppCount,
+  getAppWidgetByAppId,
+  updateAppWidgetByWidgetId,
 };
 
 export default clientAppController;

@@ -21,5 +21,9 @@ router.patch(
 
 router.delete("/delete/:appId", clientAppController.deleteAppByAppId);
 
+router.get("/widget/:appId", clientAppController.getAppWidgetByAppId);
+// todo: add a body validator
+router.patch("/widget/:widgetId", clientAppController.updateAppWidgetByWidgetId);
+
 const clientAppRoute = router;
 export default clientAppRoute;
