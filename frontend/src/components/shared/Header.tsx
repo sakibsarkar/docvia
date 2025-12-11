@@ -11,7 +11,7 @@ const Header = () => {
         {/* Logo */}
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-primary" />
-          <span className="text-xl font-bold text-foreground">AIChat</span>
+          <span className="text-xl font-bold text-foreground">Docvia</span>
         </div>
 
         {/* Navigation - Hidden on mobile */}

@@ -7,15 +7,17 @@ import sendResponse from "../../utils/send.response";
 import googleAuthUtils from "../googleAuth/googleAuth.utils";
 import chatBotUtils, { getBotAccessToken, setBotAccessToken } from "./chatBot.utils";
 
+import { AppWidget } from "@prisma/client";
 import fs from "fs";
 import path from "path";
+import clientAppUtils from "../clientApp/clientApp.utils";
 
 const getChatBotAccessToken = catchAsyncError(async (req, res) => {
   const appSecret = req.body.appSecret;
   const origin = req.get("origin") || new URL(req.get("referer") || "").origin;
 
   if (!appSecret) {
-    throw new AppError(400, "appId is required");
+    throw new AppError(400, "api key is required");
   }
 
   // Check cached token and validate origin & app existence
@@ -40,6 +42,13 @@ const getChatBotAccessToken = catchAsyncError(async (req, res) => {
 
   const app = await prisma.app.findUnique({
     where: { apiKeyHash: appSecret },
+    select: {
+      id: true,
+      googleDocId: true,
+      userId: true,
+      authorizedOrigin: true,
+      currentWidgetId: true,
+    },
   });
 
   if (!app) {
@@ -50,6 +59,26 @@ const getChatBotAccessToken = catchAsyncError(async (req, res) => {
     throw new AppError(403, "Unauthorized");
   }
 
+  let widget: Omit<AppWidget, "appId"> | null = null;
+  if (app.currentWidgetId) {
+    widget = await prisma.appWidget.findUnique({
+      where: { id: app.currentWidgetId },
+      omit: {
+        appId: true,
+      },
+    });
+  }
+  if (!widget) {
+    const newWidget = await prisma.appWidget.create({
+      data: {
+        ...clientAppUtils.defaultAppWidget,
+        appId: app.id,
+      },
+    });
+    // @ts-expect-error removing appId from the data
+    widget = { ...newWidget, appId: undefined };
+  }
+
   // Reuse cached token if valid
   if (cachedToken) {
     const isValid = new Date(cachedToken.expireAt) > new Date();
@@ -57,7 +86,10 @@ const getChatBotAccessToken = catchAsyncError(async (req, res) => {
       return sendResponse(res, {
         success: true,
         statusCode: 200,
-        data: cachedToken,
+        data: {
+          token: cachedToken,
+          widget,
+        },
         message: "Token fetched successfully",
       });
     }
@@ -82,7 +114,10 @@ const getChatBotAccessToken = catchAsyncError(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    data: newTokenPayload,
+    data: {
+      token: newTokenPayload,
+      widget,
+    },
     message: "Token fetched successfully",
   });
 });
@@ -92,7 +127,7 @@ const getQueryResponseByAccessToken = catchAsyncError(async (req, res) => {
   const query = req.body?.query;
 
   if (!query) {
-    throw new AppError(400, "query is required");
+    throw new AppError(400, "Please provide a question.");
   }
 
   const auth = await googleAuthUtils.getAuthForUser(bot.ownerId);
@@ -118,7 +153,7 @@ const getQueryResponseByAccessToken = catchAsyncError(async (req, res) => {
   const prompt = `
     You are a helpful assistant specialized in providing detailed information based *only* on the provided business document.
     If the answer is not directly available in the document, state that clearly and do not make up information.
-    Always strive to give a comprehensive and descriptive answer using the content of the document - and also give human-like(customer suport agent) responses forr hi/hello etc. if you can't find the answer in the document, respond with "I'm sorry, I can't help you at this moment out agent will get back to you."
+    Always strive to give a comprehensive and descriptive answer using the content of the document - and also give human-like(customer suport agent) responses forr hi/hello etc. if you can't find the answer in the document, respond with "I'm sorry, I can't help you at this moment out agent will get back to you." and please provide the response in html format like bold, italic, underline if needed. and line breaks. so that it can be easily show in ui.
     
     Business Document:
     """
