@@ -123,16 +123,14 @@
 
 @layer base {
   body {
-    @apply bg-background font-inter text-gray-950;
+    @apply bg-background font-inter;
   }
   button {
     @apply cursor-pointer;
   }
-  textarea {
-    @apply w-full overflow-auto rounded-md border bg-white px-3 py-2.5 text-sm text-black transition-colors duration-300 outline-none placeholder:text-gray-400 focus:ring-1 focus:ring-black;
-  }
+
   label {
-    @apply mb-2 block text-sm font-medium text-black;
+    @apply block text-sm font-medium;
   }
 
   .center {

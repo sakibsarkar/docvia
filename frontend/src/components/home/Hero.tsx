@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 import Image from "next/image";
+import CtaButton from "../ui/blocks/CtaButton";
 const Hero = () => {
   return (
     <section className="grid-bg relative overflow-hidden py-20 md:py-32">
@@ -32,13 +32,7 @@ const Hero = () => {
 
         {/* CTA Buttons */}
         <div className="mb-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button
-            size="lg"
-            className="group bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            Start for free
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Button>
+          <CtaButton text="Start for free" />
           <p className="text-sm text-muted-foreground">No credit card required</p>
         </div>
       </div>

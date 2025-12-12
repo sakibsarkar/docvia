@@ -171,76 +171,83 @@ const Verification = () => {
   };
 
   return (
-    <Formik initialValues={{ otp: "" }} validationSchema={validationSchema} onSubmit={handleVerify}>
-      {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
-        <div>
-          {/* Header */}
-          <div className="mb-6">
-            <h2 className="text-center font-poppins text-3xl font-semibold text-gray-700">
-              Verification
-            </h2>
-            {email && (
-              <p className="mt-2 text-center text-sm text-gray-500">
-                We sent a code to <span className="font-medium text-gray-700">{email}</span>
-              </p>
-            )}
+    <div className="bg-glow-blue rounded-2xl border border-border/50 bg-card/40 p-8 backdrop-blur-xl">
+      <Formik
+        initialValues={{ otp: "" }}
+        validationSchema={validationSchema}
+        onSubmit={handleVerify}
+      >
+        {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
+          <div>
+            {/* Header */}
+            <div className="mb-6">
+              <h2 className="text-center font-poppins text-3xl font-semibold text-foreground">
+                Verification
+              </h2>
+              {email && (
+                <p className="mt-2 text-center text-sm text-gray-500">
+                  We sent a code to{" "}
+                  <span className="font-medium text-muted-foreground">{email}</span>
+                </p>
+              )}
+            </div>
+
+            <Form className="mb-4 flex flex-col gap-4" noValidate>
+              {/* OTP */}
+              <div>
+                <label className="text-foreground" htmlFor="otp">
+                  OTP
+                </label>
+                <input
+                  id="otp"
+                  name="otp"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="\d*"
+                  autoComplete="one-time-code"
+                  placeholder="Enter Your Verification Code"
+                  className={`w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                    touched.otp && errors.otp ? "border-red-400 focus:ring-0" : "border-gray-300"
+                  }`}
+                  value={values.otp}
+                  onChange={(e) => {
+                    const digitsOnly = e.target.value.replace(/\D/g, "");
+                    handleChange({ target: { name: "otp", value: digitsOnly.slice(0, 6) } });
+                  }}
+                  onBlur={handleBlur}
+                />
+                {touched.otp && errors.otp && <FormErrorMessage message={errors.otp} />}
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isLoading}
+                  className="flex w-full justify-center rounded-lg bg-blue-600 px-3 py-2 text-base font-semibold text-white shadow-md transition hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-400 disabled:opacity-70"
+                >
+                  {isSubmitting || isLoading ? "Verifying..." : "Verify"}
+                </button>
+              </div>
+            </Form>
+
+            <span className="text-sm text-gray-500">
+              Didn&apos;t receive the code?{" "}
+              {remainingTime > 0 ? (
+                <>Resend in {dateUtils.formatSecondsToMMSS(remainingTime)}</>
+              ) : (
+                <button
+                  onClick={handleResend}
+                  disabled={remainingTime > 0}
+                  className="ml-1 cursor-pointer font-bold text-blue-500 hover:text-blue-600"
+                >
+                  Resend
+                </button>
+              )}
+            </span>
           </div>
-
-          <Form className="mb-4 flex flex-col gap-4" noValidate>
-            {/* OTP */}
-            <div>
-              <label className="label" htmlFor="otp">
-                OTP
-              </label>
-              <input
-                id="otp"
-                name="otp"
-                type="text"
-                inputMode="numeric"
-                pattern="\d*"
-                autoComplete="one-time-code"
-                placeholder="Enter Your Verification Code"
-                className={`w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                  touched.otp && errors.otp ? "border-red-400 focus:ring-0" : "border-gray-300"
-                }`}
-                value={values.otp}
-                onChange={(e) => {
-                  const digitsOnly = e.target.value.replace(/\D/g, "");
-                  handleChange({ target: { name: "otp", value: digitsOnly.slice(0, 6) } });
-                }}
-                onBlur={handleBlur}
-              />
-              {touched.otp && errors.otp && <FormErrorMessage message={errors.otp} />}
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={isSubmitting || isLoading}
-                className="flex w-full justify-center rounded-lg bg-blue-600 px-3 py-2 text-base font-semibold text-white shadow-md transition hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-400 disabled:opacity-70"
-              >
-                {isSubmitting || isLoading ? "Verifying..." : "Verify"}
-              </button>
-            </div>
-          </Form>
-
-          <span className="text-sm text-gray-500">
-            Didn&apos;t receive the code?{" "}
-            {remainingTime > 0 ? (
-              <>Resend in {dateUtils.formatSecondsToMMSS(remainingTime)}</>
-            ) : (
-              <button
-                onClick={handleResend}
-                disabled={remainingTime > 0}
-                className="ml-1 cursor-pointer font-bold text-blue-500 hover:text-blue-600"
-              >
-                Resend
-              </button>
-            )}
-          </span>
-        </div>
-      )}
-    </Formik>
+        )}
+      </Formik>
+    </div>
   );
 };
 

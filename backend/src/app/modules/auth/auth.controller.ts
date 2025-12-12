@@ -329,7 +329,8 @@ const forgotPassword = catchAsyncError(async (req, res) => {
 
   const token = authUtils.generateForgotPasswordToken(user.id.toString());
 
-  const url = `${config.frontend_base_url}/reset-password/${token}`;
+  const url = `${config.frontend_base_url}/password-reset?t=${token}`;
+  console.log(url);
 
   const subject = "Account Password Reset Requested";
   const emailContent = `

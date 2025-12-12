@@ -1,10 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useAppSelector } from "@/hooks";
+import { navlinks } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 const Header = () => {
   const { user } = useAppSelector((state) => state.user);
+  const pathName = usePathname();
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex items-center justify-between px-4 py-4 md:px-6 lg:px-8">
@@ -16,24 +19,21 @@ const Header = () => {
 
         {/* Navigation - Hidden on mobile */}
         <nav className="hidden items-center gap-6 md:flex">
-          <a
-            href="#"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Features
-          </a>
-          <a
-            href="#"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Pricing
-          </a>
-          <a
-            href="#"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Documentation
-          </a>
+          {navlinks.map((link, idx) => {
+            const { name, href, ...rest } = link;
+            return (
+              <Link
+                key={idx + "main_link"}
+                href={href}
+                {...rest}
+                className={`text-sm ${
+                  pathName === link.href ? "text-primary" : "text-muted-foreground"
+                } transition-colors hover:text-foreground`}
+              >
+                {name}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Auth Buttons */}

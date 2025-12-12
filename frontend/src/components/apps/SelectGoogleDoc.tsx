@@ -4,7 +4,7 @@ import { IGoogleDoc } from "@/types";
 import { Check, FileMinusCorner } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import Skeleton from "../ui/Skeleton";
+import Skeleton from "../ui/blocks/Skeleton";
 // helper (optional)
 const SkeletonRow = () => (
   <div className="flex items-start gap-3 border-b border-gray-200 bg-white p-3">

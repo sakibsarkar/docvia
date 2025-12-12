@@ -1,13 +1,16 @@
 "use client";
 
 import { FormErrorMessage } from "@/components";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { useLoginUserMutation } from "@/redux/features/user/user.api";
 import { setUser, updateUser } from "@/redux/features/user/user.slice";
-import { IQueryMutationErrorResponse } from "@/types/queryMutationErrorResponse";
+import { IQueryMutationErrorResponse } from "@/types";
 import { Form, Formik } from "formik";
-import { Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
+import { Bot, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -53,58 +56,50 @@ export default function Login() {
     toast.success("Login successful");
   };
 
-  const inputClass = (hasError: boolean) =>
-    `w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-      hasError ? "border-red-400 focus:ring-0" : "border-gray-300"
-    }`;
-
   return (
-    <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
-      {({
-        values,
-        errors,
-        touched,
-        submitCount,
-        handleChange,
-        handleBlur,
-        isSubmitting,
-        setFieldValue,
-      }) => {
-        const showEmailError = !!errors.email && (touched.email || submitCount > 0);
-        const showPasswordError = !!errors.password && (touched.password || submitCount > 0);
+    <div className="relative w-full">
+      {/* Card with subtle glow */}
+      <div className="bg-glow-blue rounded-2xl border border-border/50 bg-card/40 p-8 backdrop-blur-xl">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+            <Bot className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="mb-2 text-3xl font-bold text-foreground">Welcome Back</h1>
+          <p className="text-sm text-muted-foreground">Sign in to your account to continue</p>
+        </div>
 
-        return (
-          <div>
-            {/* Header */}
-            <div className="mb-6">
-              <Image
-                alt="Your Company"
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=blue&shade=600"
-                className="mx-auto mb-4 h-10 w-auto"
-                width={40}
-                height={40}
-                priority
-              />
-              <h2 className="text-center font-poppins text-3xl font-semibold text-gray-700">
-                Login
-              </h2>
-            </div>
+        {/* Form */}
+        <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
+          {({
+            values,
+            errors,
+            touched,
+            submitCount,
+            handleChange,
+            handleBlur,
+            isSubmitting,
+            setFieldValue,
+          }) => {
+            const showEmailError = !!errors.email && (touched.email || submitCount > 0);
+            const showPasswordError = !!errors.password && (touched.password || submitCount > 0);
 
-            {/* Form */}
-            <Form className="mb-4 flex flex-col gap-6" noValidate>
-              <div className="flex flex-col gap-4">
+            return (
+              <Form className="space-y-6" noValidate>
                 {/* Email */}
-                <div className="w-full">
-                  <label className="label" htmlFor="email">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-foreground">
                     Email Address
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="email"
                     name="email"
                     type="email"
                     autoComplete="email"
-                    aria-label="Email address"
-                    className={inputClass(showEmailError)}
+                    placeholder="you@example.com"
+                    className={`bg-input/50 text-foreground placeholder:text-muted-foreground ${
+                      showEmailError ? "border-destructive" : ""
+                    }`}
                     value={values.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -115,18 +110,20 @@ export default function Login() {
                 </div>
 
                 {/* Password */}
-                <div>
-                  <label className="label" htmlFor="password">
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-foreground">
                     Password
-                  </label>
-                  <div className="relative h-full w-full">
-                    <input
+                  </Label>
+                  <div className="relative">
+                    <Input
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
-                      aria-label="Password"
-                      className={inputClass(showPasswordError)}
+                      placeholder="••••••••"
+                      className={`bg-input/50 pr-10 text-foreground placeholder:text-muted-foreground ${
+                        showPasswordError ? "border-destructive" : ""
+                      }`}
                       value={values.password}
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -135,70 +132,62 @@ export default function Login() {
                     />
                     <button
                       type="button"
-                      className="absolute top-0 right-3 bottom-0 my-auto text-gray-400"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                       onClick={() => setShowPassword((prev) => !prev)}
                       tabIndex={-1}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                   {showPasswordError && <FormErrorMessage message={errors.password as string} />}
                 </div>
-              </div>
 
-              {/* Remember me + Forgot password */}
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="rememberMe"
-                  className="mb-0 flex items-center gap-2 text-sm text-gray-900"
-                >
-                  <input
-                    id="rememberMe"
-                    name="rememberMe"
-                    type="checkbox"
-                    checked={values.rememberMe}
-                    onChange={(e) => setFieldValue("rememberMe", e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    aria-checked={values.rememberMe}
-                  />
-                  Remember me
-                </label>
+                {/* Remember me + Forgot password */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="rememberMe"
+                      checked={values.rememberMe}
+                      onCheckedChange={(checked) => setFieldValue("rememberMe", checked)}
+                    />
+                    <label htmlFor="rememberMe" className="cursor-pointer text-sm text-foreground">
+                      Remember me
+                    </label>
+                  </div>
 
-                <div className="text-sm">
                   <Link
-                    href="/password-reset"
-                    className="font-semibold text-blue-500 transition hover:text-blue-600"
+                    href="/forgot-password"
+                    className="text-sm font-medium text-primary transition-colors hover:text-primary/80"
                   >
                     Forgot password?
                   </Link>
                 </div>
-              </div>
 
-              {/* Submit */}
-              <div>
-                <button
+                {/* Submit */}
+                <Button
                   type="submit"
-                  disabled={isSubmitting || isLoading}
-                  className="flex w-full justify-center rounded-lg bg-blue-600 px-3 py-2 text-base font-semibold text-white shadow-md transition hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-400 disabled:opacity-70"
+                  disabled={isSubmitting}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  {isSubmitting || isLoading ? "Logging in..." : "Login"}
-                </button>
-              </div>
-            </Form>
+                  {isSubmitting ? "Signing in..." : "Sign In"}
+                </Button>
+              </Form>
+            );
+          }}
+        </Formik>
 
-            <p className="text-center text-sm text-gray-500">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/register"
-                className="font-semibold text-blue-500 transition hover:text-blue-600"
-              >
-                Register
-              </Link>
-            </p>
-          </div>
-        );
-      }}
-    </Formik>
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="font-medium text-primary transition-colors hover:text-primary/80"
+          >
+            Create an account
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }
