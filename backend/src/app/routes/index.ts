@@ -4,6 +4,7 @@ import chatBotRoute from "../modules/chatBot/chatBot.route";
 import clientAppRoute from "../modules/clientApp/clientApp.route";
 import googleAuthRoute from "../modules/googleAuth/googleAuth.route";
 import subscriptionRoute from "../modules/subscription/subscription.route";
+import uploadRoute from "../modules/upload/upload.route";
 
 const router = express.Router();
 
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/chat-bot",
     route: chatBotRoute,
+  },
+  {
+    path: "/upload",
+    route: uploadRoute,
   },
 ];
 

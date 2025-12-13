@@ -6,6 +6,7 @@ import AppError from "../../errors/AppError";
 import prisma from "../../lib/prisma";
 import catchAsyncError from "../../utils/catchAsync";
 import sendResponse from "../../utils/send.response";
+import templates from "../../utils/template";
 import authUtils from "./auth.utils";
 const register = catchAsyncError(async (req, res) => {
   const body = req.body as Omit<User, "id" | "stripeCustomerId" | "isVerified" | "role">;
@@ -330,19 +331,13 @@ const forgotPassword = catchAsyncError(async (req, res) => {
   const token = authUtils.generateForgotPasswordToken(user.id.toString());
 
   const url = `${config.frontend_base_url}/password-reset?t=${token}`;
-  console.log(url);
 
   const subject = "Account Password Reset Requested";
-  const emailContent = `
-      <p style="text-align: center;">
-          Hey ${user.first_name} , please reset your account password by clicking on the link below.<br>
-          This link will expire within 5 minutes.
-      </p>
-      <a href="${url}" style="text-align: center; display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a>
-  `;
+  const emailContent = templates.forgot_password;
+  emailContent.replace("{{reset_url}}", url);
 
   try {
-    await authUtils.sendMessage({
+    await authUtils.sendEmail({
       html: emailContent,
       receiverMail: user.email,
       subject,
@@ -388,14 +383,19 @@ const resetPassword = catchAsyncError(async (req, res) => {
   });
 
   const to = user.email;
-  const subject = "Account Password Reset";
+  const subject = "Account Password Reseted";
 
-  await authUtils.sendEmail({
-    html: `
-          <p style="text-align: center;">Hey ${user.first_name} , your account password has been reset successfully.</p>`,
-    receiverMail: to,
-    subject,
-  });
+  const emailContent = templates.password_changed;
+
+  try {
+    await authUtils.sendEmail({
+      html: emailContent,
+      receiverMail: to,
+      subject,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 
   sendResponse(res, {
     success: true,
@@ -451,14 +451,17 @@ const changePassword = catchAsyncError(async (req, res) => {
 
   const to = user.email;
   const subject = "Password Changed";
-  const emailContent = `
-      <p style="text-align: center;">Hey ${user.first_name} , your account password has been changed successfully.</p>`;
+  const emailContent = templates.password_changed;
 
-  await authUtils.sendEmail({
-    html: emailContent,
-    receiverMail: to,
-    subject,
-  });
+  try {
+    await authUtils.sendEmail({
+      html: emailContent,
+      receiverMail: to,
+      subject,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 
   sendResponse(res, {
     success: true,
@@ -468,6 +471,27 @@ const changePassword = catchAsyncError(async (req, res) => {
   });
 });
 
+const updateProfile = catchAsyncError(async (req, res) => {
+  const user = req.user!;
+  const { body } = req;
+
+  const result = await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      avatar: body.avatar || undefined,
+      first_name: body.first_name || undefined,
+      last_name: body.last_name || undefined,
+    },
+  });
+  sendResponse(res, {
+    data: result,
+    success: true,
+    statusCode: 200,
+    message: "User profile updated successfully",
+  });
+});
 const authController = {
   login,
   register,
@@ -479,6 +503,7 @@ const authController = {
   refreshToken,
   logout,
   author,
+  updateProfile,
 };
 
 export default authController;

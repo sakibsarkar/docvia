@@ -6,6 +6,8 @@ import AppError from "../../errors/AppError";
 import prisma from "../../lib/prisma";
 import { IUserJWTPayload } from "./auth.interface";
 
+import nodemailer from "nodemailer";
+
 const generateAccessToken = (payload: IUserJWTPayload) => {
   const { EXPIRY, SECRET = "" } = config.ACCESS_TOKEN;
 
@@ -49,8 +51,27 @@ const sendMessage = async (data: { html: string; receiverMail: string; subject: 
   return data;
 };
 const sendEmail = async (data: { html: string; receiverMail: string; subject: string }) => {
-  // under construction
-  return data;
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: config.GOOGLE_EMAIL_ID,
+      pass: config.GOOGLE_APP_PASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: true,
+    },
+  });
+  const mailOptions = {
+    from: config.GOOGLE_EMAIL_ID,
+    to: data.receiverMail,
+    subject: data.subject,
+    html: data.html,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+  return info;
 };
 
 const isTokenExpired = (token: string) => {
@@ -83,7 +104,6 @@ const sendVerificationEmail = async (email: string) => {
   if (user.isVerified) {
     throw new AppError(400, "User already verified");
   }
-  console.log(user.Otp);
 
   const now = new Date();
   const cooldownEnd = new Date(now.getTime() + 5 * 60 * 1000); // +5 minutes

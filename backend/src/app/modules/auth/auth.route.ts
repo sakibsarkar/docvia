@@ -25,6 +25,7 @@ router.post(
   authController.resetPassword
 );
 router.put("/change-password", authMiddleware.isAuthenticateUser(), authController.changePassword);
+router.patch("/update-profile", authMiddleware.isAuthenticateUser(), authController.updateProfile);
 
 const authRoute = router;
 export default authRoute;
