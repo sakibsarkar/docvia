@@ -1,9 +1,12 @@
 "use client";
 
 import { FormErrorMessage, InputClass } from "@/components";
-import { Form, Formik } from "formik";
+import { useChangePasswordMutation } from "@/redux/features/user/user.api";
+import { IQueryMutationErrorResponse } from "@/types";
+import { Form, Formik, FormikHelpers } from "formik";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import * as yup from "yup";
 import { Input } from "../ui/input";
 
@@ -50,8 +53,33 @@ export default function ChangePasswordForm() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleSubmit = async (values: typeof initialValues) => {
-    console.log("Change password payload", values);
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
+
+  const handleSubmit = async (
+    values: typeof initialValues,
+    { resetForm }: FormikHelpers<typeof initialValues>
+  ) => {
+    if (isLoading) return;
+
+    if (values.currentPassword === values.newPassword) {
+      return toast.error("New password must be different from current password.");
+    }
+
+    const res = await changePassword({
+      oldPassword: values.currentPassword,
+      password: values.newPassword,
+    });
+
+    const error = res.error as IQueryMutationErrorResponse;
+
+    if (error) {
+      toast.error(error?.data?.message || "Something went wrong");
+      resetForm();
+      return;
+    }
+
+    toast.success("Password changed successfully!");
+    resetForm();
   };
 
   return (
@@ -177,8 +205,8 @@ export default function ChangePasswordForm() {
 
             {/* Buttons */}
             <div className="flex gap-3 pt-2">
-              <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
-                {isSubmitting ? "Saving…" : "Save"}
+              <button type="submit" disabled={isLoading} className="btn-primary w-full">
+                {isLoading ? "Saving…" : "Save"}
               </button>
               <button type="button" onClick={() => resetForm()} className="btn-secondary w-full">
                 Reset

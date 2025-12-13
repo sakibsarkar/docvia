@@ -1,5 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { Github, Linkedin, Twitter } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -9,10 +11,16 @@ const Footer = () => {
         <div className="mb-12 grid gap-8 md:grid-cols-4">
           {/* Brand */}
           <div>
-            <div className="mb-4 flex items-center gap-2">
-              <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500" />
-              <span className="font-bold text-primary">AIChat</span>
-            </div>
+            <Link href="/" className="flex h-16 shrink-0 items-center gap-[10px]">
+              <Image
+                width={32}
+                height={32}
+                alt="Your Company"
+                src="/images/logo.png"
+                className="h-8 w-auto"
+              />
+              <span className="text-foreground">DOCVIA</span>
+            </Link>
             <p className="text-sm text-muted-foreground">
               Build AI chatbots that understand your business.
             </p>

@@ -236,13 +236,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Desktop sidebar */}
         <div className="hidden h-full w-fit shrink-0 border-r border-sidebar-border lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-sidebar px-6 py-4">
-            <div className="flex h-16 shrink-0 items-center">
-              <img
+            <Link href="/" className="flex h-16 shrink-0 items-center gap-[10px]">
+              <Image
+                width={32}
+                height={32}
                 alt="Your Company"
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                src="/images/logo.png"
                 className="h-8 w-auto"
               />
-            </div>
+              <span className="text-foreground">DOCVIA</span>
+            </Link>
 
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">

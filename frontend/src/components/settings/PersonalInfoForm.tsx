@@ -2,9 +2,13 @@
 
 import { FormErrorMessage, InputClass } from "@/components";
 import { useAppSelector } from "@/hooks";
+import { useUploadSingleFileMutation } from "@/redux/features/upload/upload.api";
+import { useUpdateProfileMutation } from "@/redux/features/user/user.api";
+import { IQueryMutationErrorResponse, IUser } from "@/types";
 import { Form, Formik } from "formik";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import * as yup from "yup";
 import { Input } from "../ui/input";
 
@@ -26,6 +30,10 @@ const personalInfoFormSchema = yup.object({
 export default function PersonalInfoForm() {
   const { user } = useAppSelector((s) => s.user);
 
+  const [update, { isLoading }] = useUpdateProfileMutation();
+
+  const [upload, { isLoading: isUploading }] = useUploadSingleFileMutation();
+
   const initialValues = useMemo(
     () => ({
       firstName: user?.first_name ?? "",
@@ -45,10 +53,34 @@ export default function PersonalInfoForm() {
     };
   }, [previewUrl]);
 
-  const isLoading = false;
-
   const handleSubmit = async (values: typeof initialValues) => {
-    console.log(values);
+    if (isLoading || isUploading) return;
+
+    const payload: Partial<IUser> = {
+      first_name: values.firstName,
+      last_name: values.lastName,
+    };
+
+    if (values.avatar) {
+      const form = new FormData();
+      form.append("file", values.avatar);
+
+      const res = await upload(form);
+      const error = res.error as IQueryMutationErrorResponse;
+      if (error) {
+        toast.error("Failed to upload avatar");
+      } else {
+        payload.avatar = res.data?.data;
+      }
+    }
+    const res = await update(payload);
+    const error = res.error as IQueryMutationErrorResponse;
+    if (error) {
+      toast.error(error?.data?.message || "Something went wrong.");
+      return;
+    }
+
+    toast.success("Profile updated successfully!");
   };
 
   return (
@@ -58,17 +90,14 @@ export default function PersonalInfoForm() {
       onSubmit={handleSubmit}
       enableReinitialize
     >
-      {({ values, errors, touched, isSubmitting, setFieldValue }) => (
+      {({ values, errors, touched, setFieldValue }) => (
         <Form className="md:col-span-2">
           <div className="flex flex-col gap-4 rounded-md border border-border bg-card p-6 shadow-md">
             {/* Avatar */}
             <div className="flex items-center gap-x-4">
               <Image
                 alt="Avatar preview"
-                src={
-                  previewUrl ??
-                  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                }
+                src={previewUrl ?? "/images/avatar.jpg"}
                 className="size-24 flex-none rounded-lg border border-gray-200 object-cover"
                 width={100}
                 height={100}
@@ -78,10 +107,11 @@ export default function PersonalInfoForm() {
                 <input
                   id="avatarInput"
                   type="file"
-                  accept="image/jpeg,image/png,image/gif"
+                  accept="image/jpeg,image/png,image/webp"
                   className="hidden"
                   onChange={(e) => {
                     const file = e.currentTarget.files?.[0] ?? null;
+                    if (!file) return;
                     // Update Formik state
                     setFieldValue("avatar", file);
                     // Update preview
@@ -172,10 +202,10 @@ export default function PersonalInfoForm() {
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
-                disabled={isSubmitting || isLoading}
+                disabled={isUploading || isLoading}
                 className="btn-primary w-full"
               >
-                {isSubmitting || isLoading ? "Saving…" : "Save"}
+                {isUploading || isLoading ? "Saving…" : "Save"}
               </button>
             </div>
           </div>

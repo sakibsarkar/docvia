@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAppSelector } from "@/hooks";
 import { navlinks } from "@/lib/utils";
 import { Menu } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 const Header = () => {
@@ -12,10 +13,16 @@ const Header = () => {
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex items-center justify-between px-4 py-4 md:px-6 lg:px-8">
         {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary" />
-          <span className="text-xl font-bold text-foreground">Docvia</span>
-        </div>
+        <Link href="/" className="flex h-16 shrink-0 items-center gap-[10px]">
+          <Image
+            width={32}
+            height={32}
+            alt="Your Company"
+            src="/images/logo.png"
+            className="h-8 w-auto"
+          />
+          <span className="text-foreground">DOCVIA</span>
+        </Link>
 
         {/* Navigation - Hidden on mobile */}
         <nav className="hidden items-center gap-6 md:flex">
