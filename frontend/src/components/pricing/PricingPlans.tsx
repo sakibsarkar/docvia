@@ -14,7 +14,7 @@ const PricingPlans = async () => {
   return (
     <div className="relative mx-auto grid max-w-6xl gap-[20px] md:grid-cols-3">
       {data.data
-        .sort((a, b) => a.order - b.order)
+        ?.sort((a, b) => a.order - b.order)
         .map((plan) => (
           <PricingPlanCard key={plan.id} plan={plan} />
         ))}

@@ -38,17 +38,11 @@ app.use("/api/v1", router);
 
 // test route
 app.get("/", async (_req: Request, res: Response) => {
-  const session = await stripe.billingPortal.sessions.create({
-    customer: "cus_TZFYAh8yx8nx5C",
-    return_url: "https://your-website.com/account", // where Stripe redirects after they close the portal
-  });
-
-  // const stripeSub = await stripe.subscriptions.retrieve("sub_1ScKOJB8Zk6befohBDZb35Bf");
   sendResponse(res, {
     success: true,
     statusCode: 200,
-    data: session.url,
-    message: "App is running",
+    data: null,
+    message: "Server is running",
   });
 });
 

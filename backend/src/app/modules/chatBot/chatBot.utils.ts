@@ -54,7 +54,9 @@ const getClientIp = (req: Request) => {
   );
 };
 const getCountryFromIp = (ip: string | null) => {
-  if (!ip) return null;
+  if (!ip) {
+    return null;
+  }
 
   const geo = geoip.lookup(ip);
   return geo?.country ?? null; // "US", "BD", "IN"

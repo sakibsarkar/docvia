@@ -70,8 +70,12 @@ const visitorStatistics = async (appId: string, userId: string) => {
     select: { userId: true, id: true },
   });
 
-  if (!app) throw new AppError(404, "App not found");
-  if (app.userId !== userId) throw new AppError(403, "Forbidden");
+  if (!app) {
+    throw new AppError(404, "App not found");
+  }
+  if (app.userId !== userId) {
+    throw new AppError(403, "Forbidden");
+  }
 
   // 30 days ago
   const startDate = new Date();
@@ -120,8 +124,12 @@ const chatStatistics = async (appId: string, userId: string) => {
     select: { userId: true, id: true },
   });
 
-  if (!app) throw new AppError(404, "App not found");
-  if (app.userId !== userId) throw new AppError(403, "Forbidden");
+  if (!app) {
+    throw new AppError(404, "App not found");
+  }
+  if (app.userId !== userId) {
+    throw new AppError(403, "Forbidden");
+  }
 
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - 29); // include today
@@ -143,7 +151,9 @@ const chatStatistics = async (appId: string, userId: string) => {
 
   chats.forEach((chat) => {
     const key = chat.createdAt.toISOString().slice(0, 10); // UTC YYYY-MM-DD
-    if (!statsMap[key]) statsMap[key] = { answered: 0, missed: 0 };
+    if (!statsMap[key]) {
+      statsMap[key] = { answered: 0, missed: 0 };
+    }
     statsMap[key][chat.status] += 1;
   });
 
