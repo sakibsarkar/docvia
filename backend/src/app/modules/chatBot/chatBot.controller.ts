@@ -10,10 +10,13 @@ import chatBotUtils, { getBotAccessToken, setBotAccessToken } from "./chatBot.ut
 import { AppWidget } from "@prisma/client";
 import fs from "fs";
 import path from "path";
+import { v4 } from "uuid";
 import clientAppUtils from "../clientApp/clientApp.utils";
 
 const getChatBotAccessToken = catchAsyncError(async (req, res) => {
   const appSecret = req.body.appSecret;
+  let uid = req.body.uid as string | undefined;
+
   const origin = req.get("origin") || new URL(req.get("referer") || "").origin;
 
   if (!appSecret) {
@@ -57,6 +60,46 @@ const getChatBotAccessToken = catchAsyncError(async (req, res) => {
 
   if (app.authorizedOrigin !== origin) {
     throw new AppError(403, "Unauthorized");
+  }
+
+  const ip = chatBotUtils.getClientIp(req);
+  const country = chatBotUtils.getCountryFromIp(ip);
+  if (!uid) {
+    uid = v4();
+    await prisma.appVisitor.create({
+      data: {
+        uid,
+        appId: app.id,
+        country: country || "",
+      },
+    });
+  } else {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const startOfTomorrow = new Date(startOfToday);
+    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+    const visitedToday = await prisma.appVisitor.findFirst({
+      where: {
+        appId: app.id,
+        uid,
+        createdAt: {
+          gte: startOfToday,
+          lt: startOfTomorrow,
+        },
+      },
+    });
+    if (!visitedToday) {
+      await prisma.appVisitor.create({
+        data: {
+          uid,
+          appId: app.id,
+          country: country || "",
+        },
+      });
+    }
+    uid = undefined;
   }
 
   let widget: Omit<AppWidget, "appId"> | null = null;
@@ -117,6 +160,7 @@ const getChatBotAccessToken = catchAsyncError(async (req, res) => {
     data: {
       token: newTokenPayload,
       widget,
+      uid,
     },
     message: "Token fetched successfully",
   });
@@ -171,10 +215,26 @@ const getQueryResponseByAccessToken = catchAsyncError(async (req, res) => {
     const geminiResult = await model.generateContent(prompt); // Await the result
     const response = await geminiResult.response;
     geminiResponseText = response.text(); // Extract the text from Gemini's response
+
+    await prisma.chatAns.create({
+      data: {
+        appId: bot.appId,
+        question: query,
+        status: "answered",
+      },
+    });
   } catch (error) {
     console.error("Error generating content with Gemini:", error);
     // You might want to send a more specific error message to the client here
     geminiResponseText = "Error processing your request with the AI model.";
+
+    await prisma.chatAns.create({
+      data: {
+        appId: bot.appId,
+        question: query,
+        status: "answered",
+      },
+    });
   }
 
   sendResponse(res, {

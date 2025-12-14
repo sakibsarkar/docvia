@@ -1,4 +1,5 @@
 import express from "express";
+import appStatisticsRoute from "../modules/appStatistics/appStatistics.route";
 import authRoute from "../modules/auth/auth.route";
 import chatBotRoute from "../modules/chatBot/chatBot.route";
 import clientAppRoute from "../modules/clientApp/clientApp.route";
@@ -28,6 +29,10 @@ const moduleRoutes = [
   {
     path: "/chat-bot",
     route: chatBotRoute,
+  },
+  {
+    path: "/app-statistics",
+    route: appStatisticsRoute,
   },
   {
     path: "/upload",

@@ -83,8 +83,10 @@ model App {
   appWidgets AppWidget[]
 
   // One-to-one relation for current widget
-  currentWidgetId String?    @unique // optional if app can start without a current widget
-  currentWidget   AppWidget? @relation("CurrentWidget", fields: [currentWidgetId], references: [id])
+  currentWidgetId String?      @unique // optional if app can start without a current widget
+  currentWidget   AppWidget?   @relation("CurrentWidget", fields: [currentWidgetId], references: [id])
+  appVisitor      AppVisitor[]
+  ChatAns         ChatAns[]
 }
 
 model AppWidget {
@@ -104,6 +106,24 @@ model AppWidget {
   appAsCurrent        App?     @relation("CurrentWidget")
 }
 
+model AppVisitor {
+  id        String   @id @default(uuid())
+  appId     String
+  appInfo   App      @relation(fields: [appId], references: [id])
+  uid       String
+  country   String
+  createdAt DateTime @default(now())
+}
+
+model ChatAns {
+  id        String        @id @default(uuid())
+  question  String
+  appId     String
+  status    ChatAnsStatus @default(missed)
+  appInfo   App           @relation(fields: [appId], references: [id])
+  createdAt DateTime      @default(now())
+}
+
 model GoogleAuthToken {
   userId       String   @unique
   user         User     @relation(fields: [userId], references: [id])
@@ -121,6 +141,11 @@ model GoogleAuthToken {
 enum UserRole {
   user
   admin
+}
+
+enum ChatAnsStatus {
+  answered
+  missed
 }
 
 enum SubscriptionStatus {

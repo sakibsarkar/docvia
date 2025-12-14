@@ -21,6 +21,7 @@ app.post(
   subscriptionWebhook.mainHook
 );
 
+app.set("trust proxy", true);
 app.use("/assets", express.static(path.join(process.cwd(), "public")));
 // parsers
 app.use(cookieParser());
