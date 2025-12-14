@@ -1,7 +1,7 @@
 "use client";
 
-import ManageSubscription from "@/components/dashboard/subscriptionManage/ManageSubscription";
-import SubscriptionManageViewSkeleton from "@/components/dashboard/subscriptionManage/SubscriptionManageViewSkeleton";
+import ManageSubscription from "@/components/subscriptionManage/ManageSubscription";
+import SubscriptionManageViewSkeleton from "@/components/subscriptionManage/SubscriptionManageViewSkeleton";
 import ChoosePricingPlans from "@/components/pricing/ChoosePricingPlans";
 import { useGetCurrentSubscriptionDetailsQuery } from "@/redux/features/subscription/subscription.api";
 import dateUtils from "@/utils/date";
