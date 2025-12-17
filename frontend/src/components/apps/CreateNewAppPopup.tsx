@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import CreateAppForm from "./CreateAppForm";
 
 interface CreateNewAppPopupProps {
@@ -11,10 +11,7 @@ interface CreateNewAppPopupProps {
 const CreateNewAppPopup = ({ openPopup, setOpenPopup }: CreateNewAppPopupProps) => {
   return (
     <Dialog open={openPopup} onOpenChange={setOpenPopup}>
-      <DialogContent className="max-w-[700px]">
-        <DialogClose className="absolute top-0 right-0 rounded-md bg-white p-4 text-gray-400 hover:text-gray-500">
-          <span className="sr-only">Close</span>
-        </DialogClose>
+      <DialogContent className="max-w-[700px] bg-card">
         <CreateAppForm setOpenPopup={setOpenPopup} />
       </DialogContent>
     </Dialog>

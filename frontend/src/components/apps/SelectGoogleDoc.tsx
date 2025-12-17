@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import Skeleton from "../ui/blocks/Skeleton";
 // helper (optional)
 const SkeletonRow = () => (
-  <div className="flex items-start gap-3 border-b border-gray-200 bg-white p-3">
+  <div className="flex items-start gap-3 border-b border-border p-3">
     {/* radio circle */}
     <Skeleton className="aspect-square w-[20px] rounded-full border border-gray-200" />
     {/* doc icon + text */}
@@ -56,10 +56,10 @@ const SelectGoogleDoc = ({
 
   return (
     <div className="w-full">
-      <h4 className="mb-2 text-sm font-semibold text-gray-900">
+      <h4 className="mb-2 text-sm font-semibold text-foreground">
         Select a Google Doc from your Drive
       </h4>
-      <p className="mb-3 text-sm text-gray-500">
+      <p className="mb-3 text-sm text-muted-foreground">
         Choose one document to link with your app.. You must select a document to continue.
       </p>
 
@@ -79,7 +79,7 @@ const SelectGoogleDoc = ({
           <div
             role="group"
             aria-labelledby="doc-radio-group"
-            className="max-h-[50vh] overflow-y-auto"
+            className="smoothBar max-h-[50vh] overflow-y-auto"
           >
             {docFiles.map((doc) => {
               const isSelected = doc.id === selectedFile?.id;
@@ -90,13 +90,13 @@ const SelectGoogleDoc = ({
                     setSelectedFile(doc);
                     onDocSelect(doc);
                   }}
-                  className={`top-[0px] flex cursor-pointer items-start gap-3 border-b-[1px] border-border bg-white p-3 hover:bg-gray-50 ${
-                    isSelected ? "sticky" : "static"
+                  className={`top-[0px] flex max-w-[550px] cursor-pointer items-start gap-3 border-b-[1px] border-muted p-3 hover:bg-muted-foreground/20 ${
+                    isSelected ? "sticky bg-card" : "static"
                   }`}
                 >
                   <span
-                    className={`center aspect-square w-[20px] shrink-0 rounded-full border-[1px] border-border ${
-                      isSelected ? "bg-blue-500" : "bg-white"
+                    className={`center aspect-square w-[20px] shrink-0 rounded-full border-[1px] border-primary ${
+                      isSelected ? "bg-blue-500" : "bg-card/10"
                     }`}
                   >
                     {isSelected ? <Check className="size-4 text-white" /> : ""}
@@ -104,8 +104,10 @@ const SelectGoogleDoc = ({
                   <div className="flex items-start justify-start gap-[10px]">
                     <Image width={20} height={20} src={"/images/google/docs.png"} alt="" />
                     <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-gray-900">{doc.name}</div>
-                      <span className="text-xs text-gray-500">
+                      <div className="line-clamp-1 text-sm font-medium text-foreground">
+                        {doc.name}
+                      </div>
+                      <span className="text-xs text-muted-foreground">
                         Last modified: {new Date(doc.modifiedTime).toLocaleString()}
                       </span>
                     </div>
@@ -155,14 +157,14 @@ const SelectGoogleDoc = ({
           <SkeletonRow />
         </div>
       ) : (
-        <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+        <div className="rounded-md border border-border bg-card p-4">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white ring-1 ring-gray-200 ring-inset">
-              <FileMinusCorner className="h-6 w-6 text-gray-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card ring-1 ring-border ring-inset">
+              <FileMinusCorner className="h-6 w-6 text-foreground" />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-semibold text-gray-900">No Google Docs found</h3>
-              <p className="mt-1 text-sm text-gray-600">
+              <h3 className="text-sm font-semibold text-foreground">No Google Docs found</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
                 You need at least one Google Doc in your account to continue.
               </p>
             </div>

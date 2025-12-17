@@ -62,8 +62,8 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
   return (
     <section className="flex flex-col gap-8">
       <div>
-        <h2 className="text-xl font-semibold text-black">Create a New App</h2>
-        <p className="mt-1 text-sm/6 text-gray-500">
+        <h2 className="text-xl font-semibold text-foreground">Create a New App</h2>
+        <p className="mt-1 text-sm/6 text-muted-foreground">
           Step {step + 1} of {steps.length}
         </p>
       </div>
@@ -105,25 +105,27 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
 
           return (
             <Form className="md:col-span-3">
-              <div className="max-w=[800px] flex flex-col gap-6 rounded-md border border-gray-200 bg-white p-5 md:p-6">
+              <div className="max-w=[800px] flex flex-col gap-6 rounded-md border border-border bg-card p-5 md:p-6">
                 {/* STEP 1: App Name */}
                 {step === 0 && (
                   <div className="w-full">
-                    <label htmlFor="appName" className="block text-sm font-medium text-gray-900">
+                    <label htmlFor="appName" className="block text-sm font-medium text-foreground">
                       App Name
                     </label>
-                    <p className="my-2 text-sm text-gray-500">This is your app’s visible name.</p>
+                    <p className="my-2 text-sm text-muted-foreground">
+                      This is your app’s visible name.
+                    </p>
                     <div className="relative">
-                      <Pencil className="absolute top-0 bottom-0 left-2 my-auto h-4 w-4 text-gray-400" />
+                      <Pencil className="absolute top-0 bottom-0 left-2 my-auto h-4 w-4 text-muted-foreground" />
                       <Field
                         id="appName"
                         name="appName"
                         autoComplete="off"
                         disabled={busy}
-                        className={`w-full rounded-md border py-2 pr-3 pl-8 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                        className={`w-full rounded-md border py-2 pr-3 pl-8 text-sm text-foreground outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                           touched.appName && errors.appName
                             ? "border-red-400 focus:ring-0"
-                            : "border-gray-300"
+                            : "border-border"
                         }`}
                       />
                     </div>
@@ -136,10 +138,13 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
                 {/* STEP 2: Website URL */}
                 {step === 1 && (
                   <div className="w-full">
-                    <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-900">
+                    <label
+                      htmlFor="websiteUrl"
+                      className="block text-sm font-medium text-foreground"
+                    >
                       Website URL
                     </label>
-                    <p className="my-2 text-sm leading-6 text-gray-500">
+                    <p className="my-2 text-sm leading-6 text-muted-foreground">
                       The site where you’ll embed the chat widget. And make sure the provided url
                       doest end up with a{" "}
                       <span className="rounded-[4px] bg-border p-[3px] font-semibold">/</span> or{" "}
@@ -148,14 +153,14 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
                       </span>
                     </p>
                     <div className="relative">
-                      <Link className="absolute top-0 bottom-0 left-2 my-auto h-4 w-4 text-gray-400" />
+                      <Link className="absolute top-0 bottom-0 left-2 my-auto h-4 w-4 text-muted-foreground" />
                       <Field
                         id="websiteUrl"
                         name="websiteUrl"
                         inputMode="url"
                         autoComplete="url"
                         disabled={busy}
-                        className={`w-full rounded-md border py-2 pr-3 pl-8 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                        className={`w-full rounded-md border py-2 pr-3 pl-8 text-sm text-foreground outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                           touched.websiteUrl && errors.websiteUrl
                             ? "border-red-400 focus:ring-0"
                             : "border-gray-300"
@@ -184,7 +189,7 @@ const CreateAppForm = ({ setOpenPopup }: { setOpenPopup: (open: boolean) => void
                     type="button"
                     onClick={back}
                     disabled={step === 0 || busy}
-                    className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-50"
+                    className="rounded-md border border-border px-4 py-2 text-sm text-muted-foreground hover:bg-gray-50 disabled:opacity-50"
                   >
                     Back
                   </button>

@@ -1,10 +1,10 @@
-import PricingView from "@/views/PricingView";
+import PirvacyPolicyView from "@/views/PirvacyPolicyView";
 import { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "Pricing",
+  title: "Privacy Policy",
 };
 const page = () => {
-  return <PricingView />;
+  return <PirvacyPolicyView />;
 };
 
 export default page;

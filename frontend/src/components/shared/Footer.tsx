@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,7 +15,7 @@ const Footer = () => {
               <Image
                 width={32}
                 height={32}
-                alt="Your Company"
+                alt="Docvia"
                 src="/images/logo.png"
                 className="h-8 w-auto"
               />
@@ -33,19 +33,23 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <a href="#" className="transition-colors hover:text-primary">
+                <Link href="/features" className="transition-colors hover:text-primary">
                   Features
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="transition-colors hover:text-primary">
+                <Link href="/pricing" className="transition-colors hover:text-primary">
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="transition-colors hover:text-primary">
-                  Documentation
-                </a>
+                <Link
+                  target="_blank"
+                  href="https://www.npmjs.com/package/docvia"
+                  className="transition-colors hover:text-primary"
+                >
+                  Dcoumentation
+                </Link>
               </li>
             </ul>
           </div>
@@ -80,24 +84,20 @@ const Footer = () => {
               Connect
             </h4>
             <div className="flex gap-3">
-              <a
-                href="#"
+              <Link
+                target="_blank"
+                href="https://github.com/sakibsarkar/docvia-npm"
                 className="hover:glow-cyan flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary"
               >
                 <Github className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="hover:glow-cyan flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary"
-              >
-                <Twitter className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                target="_blank"
+                href="https://www.linkedin.com/in/sakib98/"
                 className="hover:glow-cyan flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary"
               >
                 <Linkedin className="h-4 w-4" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
