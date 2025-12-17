@@ -16,8 +16,8 @@ const schemaStepWebsite = yup.object({
     .string()
     .required("Website URL is required")
     .matches(
-      /^(https?:\/\/)(localhost(:\d+)?|127\.0\.0\.1(:\d+)?|(\w+\.)+\w{2,})(:\d+)?(\/)?$/,
-      "Enter a valid root URL (e.g., https://example.com or http://localhost:3000)"
+      /^https?:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
+      "Enter a valid website URL (e.g., https://example.com)"
     ),
   selectedDocId: yup.string().required("Please select a Google Doc"),
   docName: yup.string().required("Please select a Google Doc"),
