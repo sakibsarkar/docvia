@@ -106,17 +106,14 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-col items-center justify-between text-sm text-muted-foreground md:flex-row">
-          <p>&copy; 2025 AIChat. All rights reserved.</p>
+          <p>&copy; 2025 Docvia. All rights reserved.</p>
           <div className="mt-4 flex gap-6 md:mt-0">
-            <a href="#" className="transition-colors hover:text-primary">
+            <Link href="/privacy-policy" className="transition-colors hover:text-primary">
               Privacy Policy
-            </a>
-            <a href="#" className="transition-colors hover:text-primary">
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-primary">
               Terms of Service
-            </a>
-            <a href="#" className="transition-colors hover:text-primary">
-              Cookie Settings
-            </a>
+            </Link>
           </div>
         </div>
       </div>
