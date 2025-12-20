@@ -1,7 +1,7 @@
 # Docvia
 
 ## Live link - [Docvia](https://docviapage.vercel.app/)
-## 🎥 Project Video overview: [Video]([https://www.npmjs.com/package/docvia](https://drive.google.com/file/d/1o_R1i3tXCpHtK5Xrs6v56O1XX8gM4G6x/view?usp=sharing))
+## 🎥 Project Video overview: [Video](https://drive.google.com/file/d/1o_R1i3tXCpHtK5Xrs6v56O1XX8gM4G6x/view?usp=sharing)
 
 ### 🔥 Docvia Npm package: [Docvia Npm](https://www.npmjs.com/package/docvia)
 
