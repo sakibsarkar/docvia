@@ -11,7 +11,7 @@ import router from "./app/routes";
 import sendResponse from "./app/utils/send.response";
 
 export const stripe = new Stripe(config.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2025-11-17.clover",
+  apiVersion: "2025-12-15.clover",
 });
 const app: Application = express();
 

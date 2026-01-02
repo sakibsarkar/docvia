@@ -1,8 +1,22 @@
-import { readFileSync } from "fs";
 import config from "../config";
 
 const getFileContent = (filePath: string) => {
-  let file = readFileSync(filePath, "utf-8");
+  console.log(filePath);
+
+  // let file = readFileSync(filePath, "utf-8");
+  let file = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Success</h1>
+    <a href="{{link}}"></a>
+  </body>
+</html>
+`;
   file = file.replace("{{link}}", config.frontend_base_url!);
   return file;
 };
