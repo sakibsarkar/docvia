@@ -6,12 +6,14 @@ const code = `// 1) Install
 // npm i @generativeai/chat-widget
 
 // 2) Add to your app
-import { ChatWidget } from '@generativeai/chat-widget'
+import ChatWidget from "docvia";
 
-// 3) (Optional) Send metadata
-document.dispatchEvent(new CustomEvent('ai-identify', {
-  detail: { email: 'user@acme.com' }
-}));`;
+// 3) Initialize the widget
+const App = () => {
+  const apiKey = import.meta.env.VITE_DOCVIA_API_KEY;
+  return <ChatWidget apiKey={apiKey} />;
+};
+`;
 const CodeSnippet = () => {
   const [copied, setCopied] = useState(false);
 
